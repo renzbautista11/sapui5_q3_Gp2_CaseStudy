@@ -1,0 +1,114 @@
+{
+  "_version": "1.84.0",
+  "sap.app": {
+    "id": "sapips.training.g2casestudy",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.24.0",
+      "toolsId": "337fd47c-137b-4b7d-b16f-ec4be92a3d64"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/here/goes/your/serviceurl/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.148.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "sapips.training.g2casestudy.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {}
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "sapips.training.g2casestudy.view",
+        "async": true,
+        "viewPath": "sapips.training.g2casestudy.view"
+      },
+      "routes": [
+        {
+          "name": "RouteMainView",
+          "pattern": ":?query:",
+          "target": [
+            "TargetMainView"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetMainView": {
+          "id": "MainView",
+          "name": "MainView"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "sapips.training.g2casestudy.view.App",
+      "type": "XML",
+      "id": "App",
+      "async": true
+    }
+  }
+}
