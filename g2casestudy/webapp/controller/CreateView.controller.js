@@ -1,6 +1,7 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller"
-], function (Controller) {
+    "sap/ui/core/mvc/Controller",
+    "sap/m/MessageBox"
+], function (Controller, MessageBox) {
     "use strict";
 
     return Controller.extend("sapips.training.g2casestudy.controller.CreateView", {
@@ -42,7 +43,46 @@ sap.ui.define([
         },
 
         onDeleteProduct: function () {
-            // to be implemented later
+            var oTable = this.byId("idTblProduct");
+            var aSelectedItems = oTable.getSelectedItems();
+
+            // 1. Validation: no selection
+            if (aSelectedItems.length === 0) {
+                MessageBox.error("Please select an item from the table.");
+                return;
+            }
+
+            // 2. Confirmation dialog
+            var that = this;
+
+            MessageBox.confirm(
+                "Are you sure you want to delete " + aSelectedItems.length + " item(s)?",
+                {
+                    actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                    onClose: function (oAction) {
+
+                        if (oAction === MessageBox.Action.YES) {
+
+                            var oModel = that.getView().getModel("vm");
+                            var aProducts = oModel.getProperty("/Products");
+
+                            // 3. Remove selected items
+                            aSelectedItems.forEach(function (oItem) {
+                                var oContext = oItem.getBindingContext("vm");
+                                var iIndex = parseInt(oContext.getPath().split("/")[2]);
+
+                                aProducts.splice(iIndex, 1);
+                            });
+
+                            // 4. Refresh model
+                            oModel.setProperty("/Products", aProducts);
+
+                            // 5. Clear selection
+                            oTable.removeSelections();
+                        }
+                    }
+                }
+            );
         },
 
         // Footer actions
