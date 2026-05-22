@@ -1,0 +1,147 @@
+<mvc:View
+    controllerName="sapips.training.g2casestudy.controller.CreateView"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core">
+
+    <Page
+        id="idCreatePage"
+        title="{i18n>createTitle}"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+
+        <content>
+
+            <VBox id="_IDGenVBox"
+                class="sapUiSmallMargin">
+                <!-- ORDER DETAIL SECTION -->
+                <Panel
+                    id="idPnlOrderDetail"
+                    headerText="{i18n>orderDetail}">
+
+                    <f:SimpleForm
+                        id="idFormOrderDetail"
+                        editable="true"
+                        layout="ResponsiveGridLayout">
+
+                        <!-- Receiving Plant -->
+                        <Label
+                            id="idLblReceivingPlant"
+                            text="{i18n>receivingPlant}"
+                            required="true"/>
+
+                        <Input
+                            id="idInpReceivingPlant"
+                            showValueHelp="true"
+                            valueHelpRequest=".onValueHelpReceivingPlant"
+                            placeholder="{i18n>selectPlant}"
+                            width="25rem"/>
+
+                        <!-- Delivering Plant -->
+                        <Label
+                            id="idLblDeliveringPlant"
+                            text="{i18n>deliveringPlant}"
+                            required="true"/>
+
+                        <Input
+                            id="idInpDeliveringPlant"
+                            showValueHelp="true"
+                            valueHelpRequest=".onValueHelpDeliveringPlant"
+                            placeholder="{i18n>selectPlant}"
+                            width="25rem"/>
+
+                    </f:SimpleForm>
+                </Panel>
+            
+            </VBox>
+
+            <VBox id="_IDGenVBox1" class="sapUiSmallMargin">
+                <!-- PRODUCT SECTION -->
+                <Panel id="idPnlProduct">
+
+                    <!-- HEADER TOOLBAR -->
+                    <headerToolbar>
+                        <Toolbar id="_IDGenToolbar1">
+
+                            <!-- Title on the left -->
+                            <Title id="_IDGenTitle" text="{i18n>productSectionTitle}" level="H5"/>
+
+                            <ToolbarSpacer id="_IDGenToolbarSpacer"/>
+
+                            <!-- Buttons on the right -->
+                            <Button
+                                id="idBtnAddProduct"
+                                icon="sap-icon://add"
+                                type="Transparent"
+                                press=".onAddProduct"/>
+
+                            <Button
+                                id="idBtnDeleteProduct"
+                                icon="sap-icon://delete"
+                                type="Transparent"
+                                press=".onDeleteProduct"/>
+
+                        </Toolbar>
+                    </headerToolbar>
+
+                    <!-- TABLE -->
+                    <Table
+                        id="idTblProduct"
+                        mode="MultiSelect"
+                        items="{/Products}">
+
+                        <columns>
+                            <Column id="_IDGenColumn">
+                                <Text id="_IDGenText" text="{i18n>productName}"/>
+                            </Column>
+                            <Column id="_IDGenColumn1">
+                                <Text id="_IDGenText1" text="{i18n>quantity}"/>
+                            </Column>
+                            <Column id="_IDGenColumn2">
+                                <Text id="_IDGenText2" text="{i18n>pricePerQty}"/>
+                            </Column>
+                            <Column id="_IDGenColumn3">
+                                <Text id="_IDGenText3" text="{i18n>totalPrice}"/>
+                            </Column>
+                        </columns>
+
+                        <items>
+                            <ColumnListItem id="_IDGenColumnListItem">
+                                <cells>
+                                    <Text id="_IDGenText4" text="{ProductName}"/>
+                                    <Text id="_IDGenText5" text="{Quantity}"/>
+                                    <Text id="_IDGenText6" text="{Price}"/>
+                                    <Text id="_IDGenText7" text="{Total}"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+
+                    </Table>
+
+                </Panel>
+            </VBox>
+
+        </content>
+
+        <!-- FOOTER -->
+        <footer>
+            <Toolbar id="_IDGenToolbar2">
+                <ToolbarSpacer id="_IDGenToolbarSpacer1"/>
+
+                <Button
+                    id="idBtnSave"
+                    text="{i18n>btnSave}"
+                    type="Emphasized"
+                    press=".onSave"/>
+
+                <Button
+                    id="idBtnCancel"
+                    text="{i18n>btnCancel}"
+                    type="Reject"
+                    press=".onCancel"/>
+            </Toolbar>
+        </footer>
+
+    </Page>
+</mvc:View>
