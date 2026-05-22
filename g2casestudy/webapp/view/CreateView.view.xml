@@ -93,7 +93,7 @@
                     <Table
                         id="idTblProduct"
                         mode="MultiSelect"
-                        items="{/Products}">
+                        items="{vm>/Products}">
 
                         <columns>
                             <Column id="idColProductName">
@@ -126,19 +126,22 @@
                                 <cells>
                                     <Text
                                         id="idTxtProductRowName"
-                                        text="{ProductName}"/>
+                                        text="{vm>ProductName}"/>
 
-                                    <Text
-                                        id="idTxtProductRowQty"
-                                        text="{QuantityPerUnit}"/>
+                                    <Input
+                                        id="idInpProductQty"
+                                        value="{vm>QuantityPerUnit}"
+                                        type="Number"
+                                        width="6rem"/>
 
                                     <Text
                                         id="idTxtProductRowPrice"
-                                        text="{UnitPrice}"/>
+                                        text="{vm>UnitPrice}"/>
 
                                     <Text
                                         id="idTxtProductRowTotal"
-                                        text="{= ${UnitPrice} * 1 }"/>
+                                        text="{= Number(${vm>UnitPrice}) * Number(${vm>QuantityPerUnit}) }"/>
+
                                 </cells>
                             </ColumnListItem>
                         </items>

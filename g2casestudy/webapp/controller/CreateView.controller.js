@@ -6,14 +6,28 @@ sap.ui.define([
     return Controller.extend("sapips.training.g2casestudy.controller.CreateView", {
 
         onInit: function () {
-            // ✅ No model yet to avoid duplication
+            var oModel = this.getOwnerComponent().getModel(); // OData model
+
+            var that = this;
+
+            // Read products from backend (mock)
+            oModel.read("/Products", {
+                success: function (oData) {
+                    var oJsonModel = new sap.ui.model.json.JSONModel({
+                        Products: oData.results
+                    });
+
+                    // Set as view model
+                    that.getView().setModel(oJsonModel, "vm");
+                }
+            });
         },
 
         onNavBack: function () {
             this.getOwnerComponent().getRouter().navTo("RouteMainView");
         },
 
-        // 🔹 Value Help (placeholder for now)
+        // Value Help (placeholder for now)
         onValueHelpReceivingPlant: function () {
             // to be implemented later
         },
@@ -22,7 +36,7 @@ sap.ui.define([
             // to be implemented later
         },
 
-        // 🔹 Product actions (placeholder)
+        // Product actions (placeholder)
         onAddProduct: function () {
             // to be implemented later
         },
@@ -31,7 +45,7 @@ sap.ui.define([
             // to be implemented later
         },
 
-        // 🔹 Footer actions
+        // Footer actions
         onSave: function () {
             // to be implemented later
         },
