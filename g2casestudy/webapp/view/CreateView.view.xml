@@ -130,15 +130,15 @@
 
                                     <Text
                                         id="idTxtProductRowQty"
-                                        text="{Quantity}"/>
+                                        text="{QuantityPerUnit}"/>
 
                                     <Text
                                         id="idTxtProductRowPrice"
-                                        text="{Price}"/>
+                                        text="{UnitPrice}"/>
 
                                     <Text
                                         id="idTxtProductRowTotal"
-                                        text="{Total}"/>
+                                        text="{= ${UnitPrice} * 1 }"/>
                                 </cells>
                             </ColumnListItem>
                         </items>
