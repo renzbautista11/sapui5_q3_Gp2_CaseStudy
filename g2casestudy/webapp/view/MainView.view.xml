@@ -2,5 +2,35 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m">
     <Page id="page" title="{i18n>title}">
+      <Table id="idMainViewTable" items="{/Orders}" >
+       <columns>
+        <Column id="idColumn1" minScreenWidth="Tablet" demandPopin="true">
+         <Text id="idColTxtOrderNumber" text="{i18n>OrderNumber}"/>                     
+        </Column>
+        <Column id="idColumn2" minScreenWidth="Tablet" demandPopin="true">
+         <Text id="idColTxtCreatedOn" text="{i18n>CreatedOn}"/>                     
+        </Column>
+        <Column id="idColumn3" minScreenWidth="Tablet" demandPopin="true">
+         <Text id="idColTxtReceivingPlant" text="{i18n>ReceivingPlant}"/>                     
+        </Column>
+        <Column id="idColumn4" minScreenWidth="Tablet" demandPopin="true">
+         <Text id="idColTxtDeliveringPlant" text="{i18n>DeliveringPlant}"/>                     
+        </Column>
+        <Column id="idColumn5" minScreenWidth="Tablet" demandPopin="true">
+         <Text id="idColTxtStatus" text="{i18n>Status}"/>                     
+        </Column>
+       </columns>
+       <items>
+        <ColumnListItem id="idColumnListItem1">
+         <cells>
+          <Text id="idCellOrderID" text="{OrderID}"/>
+          <Text id="idCellOrderDate" text="{OrderDate}"/>
+          <Text id="idCellReceivingPlant" text="{ReceivingPlant}"/>
+          <Text id="idCellDeliveringPlant" text="{DeliveringPlant}"/>
+          <Text id="idCellStatus" text="{Status}"/>
+         </cells>
+        </ColumnListItem>
+        </items>
+      </Table>
     </Page>
 </mvc:View>
