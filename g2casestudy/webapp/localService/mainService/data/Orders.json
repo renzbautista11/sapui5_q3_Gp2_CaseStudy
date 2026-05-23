@@ -19,7 +19,7 @@
         "OrderID": "012203",
         "CustomerID": "Cust1",
         "OrderDate": "/Date(1420227094000)/",
-        "Status": "Parially Completed",
+        "Status": "Partially Completed",
         "ReceivingPlant": "9101 - Singapore",
         "DeliveringPlant": "9102 - Malaysia"
     },
