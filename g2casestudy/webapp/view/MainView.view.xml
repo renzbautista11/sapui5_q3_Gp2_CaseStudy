@@ -30,7 +30,7 @@
          <Text id="idColTxtDeliveringPlant" text="{i18n>DeliveringPlant}"/>                     
         </Column>
         <Column id="idCol5" minScreenWidth="Tablet" demandPopin="true">
-         <Text id="idColTxtStatus" text="{i18n>Status}"/>                     
+        <Text id="idColTxtStatus" text="{i18n>Status}"/>                     
         </Column>
        </columns>
        <items>
@@ -40,7 +40,8 @@
           <Text id="idCellOrderDate" text="{ path: 'OrderDate', formatter: 'formatter.formatDate' }"/>
           <Text id="idCellReceivingPlant" text="{ReceivingPlant}"/>
           <Text id="idCellDeliveringPlant" text="{DeliveringPlant}"/>
-          <Text id="idCellStatus" text="{Status}"/>
+          <ObjectStatus id="idCellStatus" text="{Status}"
+                  state="{path: 'Status', formatter: 'formatter.getStatusState'}"/>                    
          </cells>
         </ColumnListItem>
         </items>
