@@ -2,9 +2,41 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:fb="sap.ui.comp.filterbar"
     core:require="{formatter: 'sapips/training/g2casestudy/model/formatter'}"
     >
-    <Page id="idPageMainView" title="{i18n>title}">
+    <f:DynamicPage id="idDynPageMainView">
+      <f:header>
+        <f:DynamicPageHeader id="idDynPageHdrMainView">
+          <fb:FilterBar id="idFBMainView" useToolbar="false" showClearOnFB="true" showFilterConfiguration="false" search=".onSearch" filterChange=".onFilterChange" >
+            <fb:filterGroupItems>
+              <fb:FilterGroupItem id="idFGI1" name="OrderNumber" label="{i18n>OrderNumber}" groupName="Group1" visibleInFilterBar="true">
+                <fb:control>
+                <Input id="idInpOrderNumber"></Input>
+                </fb:control>
+              </fb:FilterGroupItem>
+              <fb:FilterGroupItem id="idFGI2" name="CreatedOn" label="{i18n>CreatedOn}" groupName="Group1" visibleInFilterBar="true">
+                <fb:control>
+                <DateRangeSelection id="idDRSCreatedOn" displayFormat="long" valueFormat=""/>
+                </fb:control>
+              </fb:FilterGroupItem>
+              <fb:FilterGroupItem id="idFGI3" name="Status" label="{i18n>Status}" groupName="Group1" visibleInFilterBar="true">
+                <fb:control>
+                    <MultiComboBox id="idMCBStatus"
+                      name="Status">
+                      <core:Item id="idMCBStatusItem0" key="0" text="Created"/> 
+                      <core:Item id="idMCBStatusItem1" key="1" text="Released"/>
+                      <core:Item id="idMCBStatusItem2" key="2" text="Partially Completed"/>
+                      <core:Item id="idMCBStatusItem3" key="3" text="Delivered"/>
+                    </MultiComboBox>
+                </fb:control>
+              </fb:FilterGroupItem>
+            </fb:filterGroupItems>
+          </fb:FilterBar>
+        </f:DynamicPageHeader>
+      </f:header>
+      <f:content>
       <Table id="idTabMainView"
             items="{path: '/Orders', sorter: {path: 'OrderID'} }"
             mode="MultiSelect">
@@ -12,8 +44,8 @@
         <Toolbar id="idTBMainViewTable">
          <Title id="idTitleMainViewTable" text="{i18n>Orders}"/>
          <ToolbarSpacer id="idTBSpacer1"/>
-         <Button id="idBtnAdd" icon="sap-icon://add" tooltip="{i18n>CreateOrder}" press="onCreate"/>
-         <Button id="idBtnDelete" icon="sap-icon://delete" tooltip="{i18n>DeleteOrder}" press="onDelete"/>
+         <Button id="idBtnAdd" icon="sap-icon://add" tooltip="{i18n>CreateOrder}" press=".onCreate"/>
+         <Button id="idBtnDelete" icon="sap-icon://delete" tooltip="{i18n>DeleteOrder}" press=".onDelete"/>
         </Toolbar>
        </headerToolbar>
        <columns>
@@ -46,5 +78,6 @@
         </ColumnListItem>
         </items>
       </Table>
-    </Page>
+      </f:content>
+    </f:DynamicPage>
 </mvc:View>
