@@ -1,6 +1,9 @@
 <mvc:View controllerName="sapips.training.g2casestudy.controller.MainView"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    core:require="{formatter: 'sapips/training/g2casestudy/model/formatter'}"
+    >
     <Page id="page" title="{i18n>title}">
       <Table id="idMainViewTable" items="{/Orders}" >
        <columns>
@@ -24,7 +27,7 @@
         <ColumnListItem id="idColumnListItem1">
          <cells>
           <Text id="idCellOrderID" text="{OrderID}"/>
-          <Text id="idCellOrderDate" text="{OrderDate}"/>
+          <Text id="idCellOrderDate" text="{ parts: [ {path: 'OrderDate'} ], formatter: 'formatter.formatDate' }"/>
           <Text id="idCellReceivingPlant" text="{ReceivingPlant}"/>
           <Text id="idCellDeliveringPlant" text="{DeliveringPlant}"/>
           <Text id="idCellStatus" text="{Status}"/>
