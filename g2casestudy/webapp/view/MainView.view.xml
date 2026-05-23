@@ -4,22 +4,32 @@
     xmlns:core="sap.ui.core"
     core:require="{formatter: 'sapips/training/g2casestudy/model/formatter'}"
     >
-    <Page id="page" title="{i18n>title}">
-      <Table id="idMainViewTable" headerText="Orders" items="{path: '/Orders', sorter: {path: 'OrderID'} }">
+    <Page id="idPageMainView" title="{i18n>title}">
+      <Table id="idTabMainView"
+            items="{path: '/Orders', sorter: {path: 'OrderID'} }"
+            mode="MultiSelect">
+       <headerToolbar>
+        <Toolbar id="idTBMainViewTable">
+         <Title id="idTitleMainViewTable" text="{i18n>Orders}"/>
+         <ToolbarSpacer id="idTBSpacer1"/>
+         <Button id="idBtnAdd" icon="sap-icon://add" tooltip="{i18n>CreateOrder}" press="onCreate"/>
+         <Button id="idBtnDelete" icon="sap-icon://delete" tooltip="{i18n>DeleteOrder}" press="onDelete"/>
+        </Toolbar>
+       </headerToolbar>
        <columns>
-        <Column id="idColumn1" minScreenWidth="Tablet" demandPopin="true">
+        <Column id="idCol1" minScreenWidth="Tablet" demandPopin="true">
          <Text id="idColTxtOrderNumber" text="{i18n>OrderNumber}"/>                     
         </Column>
-        <Column id="idColumn2" minScreenWidth="Tablet" demandPopin="true">
+        <Column id="idCol2" minScreenWidth="Tablet" demandPopin="true">
          <Text id="idColTxtCreatedOn" text="{i18n>CreatedOn}"/>                     
         </Column>
-        <Column id="idColumn3" minScreenWidth="Tablet" demandPopin="true">
+        <Column id="idCol3" minScreenWidth="Tablet" demandPopin="true">
          <Text id="idColTxtReceivingPlant" text="{i18n>ReceivingPlant}"/>                     
         </Column>
-        <Column id="idColumn4" minScreenWidth="Tablet" demandPopin="true">
+        <Column id="idCol4" minScreenWidth="Tablet" demandPopin="true">
          <Text id="idColTxtDeliveringPlant" text="{i18n>DeliveringPlant}"/>                     
         </Column>
-        <Column id="idColumn5" minScreenWidth="Tablet" demandPopin="true">
+        <Column id="idCol5" minScreenWidth="Tablet" demandPopin="true">
          <Text id="idColTxtStatus" text="{i18n>Status}"/>                     
         </Column>
        </columns>
