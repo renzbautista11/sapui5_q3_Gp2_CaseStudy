@@ -37,7 +37,7 @@
         <ColumnListItem id="idColumnListItem1">
          <cells>
           <Text id="idCellOrderID" text="{OrderID}"/>
-          <Text id="idCellOrderDate" text="{ parts: [ {path: 'OrderDate'} ], formatter: 'formatter.formatDate' }"/>
+          <Text id="idCellOrderDate" text="{ path: 'OrderDate', formatter: 'formatter.formatDate' }"/>
           <Text id="idCellReceivingPlant" text="{ReceivingPlant}"/>
           <Text id="idCellDeliveringPlant" text="{DeliveringPlant}"/>
           <Text id="idCellStatus" text="{Status}"/>
