@@ -5,7 +5,7 @@
     core:require="{formatter: 'sapips/training/g2casestudy/model/formatter'}"
     >
     <Page id="page" title="{i18n>title}">
-      <Table id="idMainViewTable" items="{/Orders}" >
+      <Table id="idMainViewTable" headerText="Orders" items="{path: '/Orders', sorter: {path: 'OrderID'} }">
        <columns>
         <Column id="idColumn1" minScreenWidth="Tablet" demandPopin="true">
          <Text id="idColTxtOrderNumber" text="{i18n>OrderNumber}"/>                     
