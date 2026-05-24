@@ -13,12 +13,12 @@
             <fb:filterGroupItems>
               <fb:FilterGroupItem id="idFGI1" name="OrderNumber" label="{i18n>OrderNumber}" groupName="Group1" visibleInFilterBar="true">
                 <fb:control>
-                <Input id="idInpOrderNumber"></Input>
+                <Input id="idInpOrderNumber" placeholder="{i18n>OrderNumber}"></Input>
                 </fb:control>
               </fb:FilterGroupItem>
               <fb:FilterGroupItem id="idFGI2" name="CreatedOn" label="{i18n>CreatedOn}" groupName="Group1" visibleInFilterBar="true">
                 <fb:control>
-                <DateRangeSelection id="idDRSCreatedOn" displayFormat="long" valueFormat=""/>
+                <DateRangeSelection id="idDRSCreatedOn" displayFormat="dd MMM yyyy" valueFormat="yyyy-MM-dd" placeholder="{i18n>CreatedOn}"/>
                 </fb:control>
               </fb:FilterGroupItem>
               <fb:FilterGroupItem id="idFGI3" name="Status" label="{i18n>Status}" groupName="Group1" visibleInFilterBar="true">
