@@ -42,9 +42,18 @@ sap.ui.define([
                     // process date range selection
                     if (oControl instanceof sap.m.DateRangeSelection) {
                         let aDateRange = sSelectedKey.split(" - ");
-                        if (aDateRange.length === 2) {
+                        if (aDateRange.length === 2 ||
+                            // handle cases where user manually enters a single date
+                            aDateRange.length === 1) {
                             let dStartDate = new Date(aDateRange[0]);
-                            let dEndDate = new Date(aDateRange[1]);
+                            let dEndDate = new Date();
+                            if (aDateRange.length === 1) {
+                                // if only a single date is entered, set end date to same day to filter for that specific date
+                                dEndDate = new Date(aDateRange[0]);
+                            }
+                            else {
+                                dEndDate = new Date(aDateRange[1]);
+                            }
                             dEndDate.setHours(23, 59, 59, 999); // set end date to end of the day for inclusive filtering
                             return new Filter({
                                 path: oFilterGroupItem.getName(),
