@@ -15,11 +15,14 @@
 
       <!-- Order detail -->
       <VBox id="idVboxOrderSection" class="sapUiSmallMargin">
-        <Panel id="idPnlOrderDetail" headerText="{i18n>orderDetail}">
+        <Panel id="idPnlOrderDetail" headerText="{i18n>orderDetail}" class="sapUiContentPadding">
           <f:SimpleForm
             id="idFrmOrderDetail"
             editable="true"
-            layout="ResponsiveGridLayout">
+            layout="ResponsiveGridLayout"
+            labelSpanM="4"
+            emptySpanL="0"
+            columnsL="1">
 
             <Label id="idLblReceivingPlant" text="{i18n>receivingPlant}" required="true"/>
             <Input
@@ -105,11 +108,11 @@
 
     <!-- Footer -->
     <footer>
-      <Toolbar id="idTlbFooter">
+      <OverflowToolbar id="idOvtFooter">
         <ToolbarSpacer id="idTlbSpacerFooter"/>
-        <Button id="idBtnSave" text="{i18n>btnSave}" type="Emphasized" press=".onSave"/>
-        <Button id="idBtnCancel" text="{i18n>btnCancel}" type="Reject" press=".onCancel"/>
-      </Toolbar>
+            <Button id="idBtnSave" text="{i18n>btnSave}" type="Emphasized" press=".onSave"/>
+            <Button id="idBtnCancel" text="{i18n>btnCancel}" type="Reject" press=".onCancel"/>
+      </OverflowToolbar>
     </footer>
 
   </Page>
