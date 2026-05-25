@@ -88,6 +88,72 @@ sap.ui.define([
           }
         }
       });
+    },
+
+    onAddProduct: function () {
+      var oProductsModel = this.getView().getModel("products");
+
+      // Lazy create dialog (for resuability)
+      if (!this._oAddDialog) {
+        this._oAddDialog = new SelectDialog({
+          title: "Select Product",
+          
+          // Search
+          search: function (oEvent) {
+            var sValue = oEvent.getParameter("value") || "";
+            var oBinding = oEvent.getSource().getBinding("items");
+            oBinding.filter(new Filter("ProductName", FilterOperator.Contains, sValue));
+          },
+
+          // When product is selected
+          confirm: function (oEvent) {
+            var oSelectedItem = oEvent.getParameter("selectedItem");
+            if (!oSelectedItem) { return; }
+
+            var oProduct = oSelectedItem.getBindingContext("products").getObject();
+
+            var oModel = this.getView().getModel("edit");
+            var aItems = oModel.getProperty("/Items") || [];
+
+            // Check if product is already added
+            var bExists = aItems.some(function (oItem) {
+              return oItem.ProductID === oProduct.ProductID;
+            });
+
+            if (bExists) {
+              MessageToast.show("Product is already added.");
+              return;
+            }
+
+            var iQuantity = 1; 
+            var fUnitPrice = Number(oProduct.UnitPrice) || 0;
+
+            // Add new product to table
+            aItems.push({
+              ProductID: oProduct.ProductID,
+              ProductName: oProduct.ProductName,
+              Quantity: iQuantity,
+              UnitPrice: fUnitPrice,
+              Total: iQuantity * fUnitPrice
+            });
+
+            oModel.setProperty("/Items", aItems);
+
+            MessageToast.show("Product added to the order.");
+          }.bind(this)
+        });
+
+        this._oAddDialog.setModel(this.getView().getModel("products"), "products");
+        this._oAddDialog.bindAggregation("items", {
+          path: "products>/", 
+          template: new StandardListItem({
+            title: "{products>ProductName}",
+            description: "{products>ProductID}"
+          })
+        });
+      }
+
+      this._oAddDialog.open();
     }
   });
 });
