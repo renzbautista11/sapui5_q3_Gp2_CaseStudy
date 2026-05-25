@@ -1,178 +1,116 @@
 <mvc:View
-    controllerName="sapips.training.g2casestudy.controller.CreateView"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:f="sap.ui.layout.form"
-    xmlns:core="sap.ui.core">
+  controllerName="sapips.training.g2casestudy.controller.CreateView"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.ui.layout.form"
+  xmlns:core="sap.ui.core">
 
-    <Page
-        id="idCreatePage"
-        title="{i18n>createTitle}"
-        showNavButton="true"
-        navButtonPress=".onNavBack">
+  <Page
+    id="idCreatePage"
+    title="{i18n>createTitle}"
+    showNavButton="true"
+    navButtonPress=".onNavBack">
 
-        <content>
+    <content>
 
-            <!-- order detail -->
-            <VBox
-                id="idVboxOrderSection"
-                class="sapUiSmallMargin">
+      <!-- Order detail -->
+      <VBox id="idVboxOrderSection" class="sapUiSmallMargin">
+        <Panel id="idPnlOrderDetail" headerText="{i18n>orderDetail}">
+          <f:SimpleForm
+            id="idFrmOrderDetail"
+            editable="true"
+            layout="ResponsiveGridLayout">
 
-                <Panel
-                    id="idPnlOrderDetail"
-                    headerText="{i18n>orderDetail}">
+            <Label id="idLblReceivingPlant" text="{i18n>receivingPlant}" required="true"/>
+            <Input
+              id="idInpReceivingPlant"
+              value="{vm>/Order/ReceivingPlant}"
+              showValueHelp="true"
+              valueHelpRequest=".onValueHelpReceivingPlant"
+              placeholder="{i18n>selectPlant}"
+              width="25rem"/>
 
-                    <f:SimpleForm
-                        id="idFrmOrderDetail"
-                        editable="true"
-                        layout="ResponsiveGridLayout">
+            <Label id="idLblDeliveringPlant" text="{i18n>deliveringPlant}" required="true"/>
+            <Input
+              id="idInpDeliveringPlant"
+              value="{vm>/Order/DeliveringPlant}"
+              showValueHelp="true"
+              valueHelpRequest=".onValueHelpDeliveringPlant"
+              placeholder="{i18n>selectPlant}"
+              width="25rem"/>
 
-                        <!-- receiving plant -->
-                        <Label
-                            id="idLblReceivingPlant"
-                            text="{i18n>receivingPlant}"
-                            required="true"/>
+          </f:SimpleForm>
+        </Panel>
+      </VBox>
 
-                        <Input
-                            id="idInpReceivingPlant"
-                            showValueHelp="true"
-                            valueHelpRequest=".onValueHelpReceivingPlant"
-                            placeholder="{i18n>selectPlant}"
-                            width="25rem"/>
+      <!-- Product section -->
+      <VBox id="idVboxProductSection" class="sapUiSmallMargin">
+        <Panel id="idPnlProduct">
 
-                        <!-- delivering plant -->
-                        <Label
-                            id="idLblDeliveringPlant"
-                            text="{i18n>deliveringPlant}"
-                            required="true"/>
+          <headerToolbar>
+            <Toolbar id="idTlbProductHeader">
+              <Title id="idTxtProductTitle" text="{i18n>productSectionTitle}" level="H5"/>
+              <ToolbarSpacer id="idTlbSpacerProduct"/>
 
-                        <Input
-                            id="idInpDeliveringPlant"
-                            showValueHelp="true"
-                            valueHelpRequest=".onValueHelpDeliveringPlant"
-                            placeholder="{i18n>selectPlant}"
-                            width="25rem"/>
-
-                    </f:SimpleForm>
-                </Panel>
-
-            </VBox>
-
-            <!-- product section -->
-            <VBox
-                id="idVboxProductSection"
-                class="sapUiSmallMargin">
-
-                <Panel id="idPnlProduct">
-
-                    <headerToolbar>
-                        <Toolbar id="idTlbProductHeader">
-
-                            <Title
-                                id="idTxtProductTitle"
-                                text="{i18n>productSectionTitle}"
-                                level="H5"/>
-
-                            <ToolbarSpacer id="idTlbSpacerProduct"/>
-
-                            <Button
-                                id="idBtnAddProduct"
-                                icon="sap-icon://add"
-                                type="Transparent"
-                                press=".onAddProduct"/>
-
-                            <Button
-                                id="idBtnDeleteProduct"
-                                icon="sap-icon://delete"
-                                type="Transparent"
-                                press=".onDeleteProduct"/>
-
-                        </Toolbar>
-                    </headerToolbar>
-
-                    <Table
-                        id="idTblProduct"
-                        mode="MultiSelect"
-                        items="{vm>/Products}">
-
-                        <columns>
-                            <Column id="idColProductName">
-                                <Text
-                                    id="idTxtProductName"
-                                    text="{i18n>productName}"/>
-                            </Column>
-
-                            <Column id="idColQuantity">
-                                <Text
-                                    id="idTxtQuantity"
-                                    text="{i18n>quantity}"/>
-                            </Column>
-
-                            <Column id="idColPrice">
-                                <Text
-                                    id="idTxtPrice"
-                                    text="{i18n>pricePerQty}"/>
-                            </Column>
-
-                            <Column id="idColTotal">
-                                <Text
-                                    id="idTxtTotal"
-                                    text="{i18n>totalPrice}"/>
-                            </Column>
-                        </columns>
-
-                        <items>
-                            <ColumnListItem id="idCliProductRow">
-                                <cells>
-                                    <Text
-                                        id="idTxtProductRowName"
-                                        text="{vm>ProductName}"/>
-
-                                    <Input
-                                        id="idInpProductQty"
-                                        value="{vm>QuantityPerUnit}"
-                                        type="Number"
-                                        width="6rem"/>
-
-                                    <Text
-                                        id="idTxtProductRowPrice"
-                                        text="{vm>UnitPrice}"/>
-
-                                    <Text
-                                        id="idTxtProductRowTotal"
-                                        text="{= Number(${vm>UnitPrice}) * Number(${vm>QuantityPerUnit}) }"/>
-
-                                </cells>
-                            </ColumnListItem>
-                        </items>
-
-                    </Table>
-
-                </Panel>
-            </VBox>
-
-        </content>
-
-        <!-- footer -->
-        <footer>
-            <Toolbar id="idTlbFooter">
-
-                <ToolbarSpacer id="idTlbSpacerFooter"/>
-
-                <Button
-                    id="idBtnSave"
-                    text="{i18n>btnSave}"
-                    type="Emphasized"
-                    press=".onSave"/>
-
-                <Button
-                    id="idBtnCancel"
-                    text="{i18n>btnCancel}"
-                    type="Reject"
-                    press=".onCancel"/>
-
+              <Button id="idBtnAddProduct" icon="sap-icon://add" type="Transparent" press=".onAddProduct"/>
+              <Button id="idBtnDeleteProduct" icon="sap-icon://delete" type="Transparent" press=".onDeleteProduct"/>
             </Toolbar>
-        </footer>
+          </headerToolbar>
 
-    </Page>
+          <Table
+            id="idTblProduct"
+            mode="MultiSelect"
+            noDataText="{i18n>noProducts}"
+            items="{vm>/SelectedProducts}">
+
+            <columns>
+              <Column id="idColProductName"><Text id="idTxtProductName" text="{i18n>productName}"/></Column>
+              <Column id="idColQuantity"><Text id="idTxtQuantity" text="{i18n>quantity}"/></Column>
+              <Column id="idColPrice"><Text id="idTxtPrice" text="{i18n>pricePerQty}"/></Column>
+              <Column id="idColTotal"><Text id="idTxtTotal" text="{i18n>totalPrice}"/></Column>
+            </columns>
+
+            <items>
+              <ColumnListItem id="idCliProductRow">
+                <cells>
+                  <Text id="idTxtProductRowName" text="{vm>ProductName}"/>
+
+                  <Input
+                    id="idInpProductQty"
+                    value="{vm>Quantity}"
+                    type="Number"
+                    width="6rem"
+                    liveChange=".onQtyChange"/>
+
+                  <Text id="idTxtProductRowPrice" text="{vm>Price}"/>
+
+                  <Text id="idTxtProductRowTotal" text="{vm>Total}"/>
+                </cells>
+              </ColumnListItem>
+            </items>
+
+          </Table>
+
+          <!-- Grand total -->
+          <Toolbar id="idTlbGrandTotal" class="sapUiTinyMarginTop">
+            <ToolbarSpacer id="idTlbSpacerGrandTotal"/>
+            <Text id="idTxtGrandTotalLabel" text="{i18n>grandTotal}"/>
+            <Text id="idTxtGrandTotalValue" class="sapUiTinyMarginBegin" text="{vm>/Order/GrandTotal}"/>
+          </Toolbar>
+
+        </Panel>
+      </VBox>
+
+    </content>
+
+    <!-- Footer -->
+    <footer>
+      <Toolbar id="idTlbFooter">
+        <ToolbarSpacer id="idTlbSpacerFooter"/>
+        <Button id="idBtnSave" text="{i18n>btnSave}" type="Emphasized" press=".onSave"/>
+        <Button id="idBtnCancel" text="{i18n>btnCancel}" type="Reject" press=".onCancel"/>
+      </Toolbar>
+    </footer>
+
+  </Page>
 </mvc:View>
