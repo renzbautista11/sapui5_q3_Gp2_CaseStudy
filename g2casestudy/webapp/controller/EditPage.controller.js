@@ -6,13 +6,28 @@
 sap.ui.define([
   "sap/ui/core/mvc/Controller",
   "sap/m/MessageBox",
-  "sap/m/MessageToast"
-], function (Controller, MessageBox, MessageToast) {
+  "sap/m/MessageToast",
+  "sap/ui/model/json/JSONModel",
+  "sap/m/SelectDialog",
+  "sap/m/StandardListItem",
+  "sap/ui/model/Filter",
+  "sap/ui/model/FilterOperator"
+], function (Controller, MessageBox, MessageToast, JSONModel, SelectDialog, StandardListItem, Filter, FilterOperator) {
   "use strict";
 
   return Controller.extend("g2casestudy.controller.EditPage", {
     onInit: function () {
-      // Initialization code for EditPage controller
+      // Create model for Edit Page
+      var oEditModel = new JSONModel({
+        Order: {},
+        Items: []
+      });
+      this.getView().setModel(oEditModel, "edit");
+
+      // Load Products
+      var oProductsModel = new JSONModel();
+      oProductsModel.loadData("localService/mainService/data/Products.json");
+      this.getView().setModel(oProductsModel, "products");
     },
 
     // Show confirmation when Saving
@@ -154,6 +169,11 @@ sap.ui.define([
       }
 
       this._oAddDialog.open();
+    },
+
+    onNavBack: function () {
+      // Navigate back to Detail page
+      window.history.go(-1);
     }
   });
 });
