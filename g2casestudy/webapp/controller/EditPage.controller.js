@@ -1,3 +1,8 @@
+/*  Edit Page
+    Description: In this page, user should be able to edit an existing Product Order with the 
+    associated list of products and amount.
+*/
+
 sap.ui.define([
   "sap/ui/core/mvc/Controller",
   "sap/m/MessageBox",

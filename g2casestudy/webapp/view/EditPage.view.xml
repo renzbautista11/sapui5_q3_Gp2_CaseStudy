@@ -1,3 +1,8 @@
+<!-- Edit Page
+    Description: In this page, user should be able to edit an existing Product Order with the 
+    associated list of products and amount.
+ -->
+
 <mvc:View controllerName="sapips.training.g2casestudy.controller.EditPage"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
