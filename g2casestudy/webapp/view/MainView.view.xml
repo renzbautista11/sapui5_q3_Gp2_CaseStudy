@@ -9,7 +9,7 @@
     <f:DynamicPage id="idDynPageMainView">
       <f:header>
         <f:DynamicPageHeader id="idDynPageHdrMainView">
-          <fb:FilterBar id="idFBMainView" useToolbar="false" showClearOnFB="true" showFilterConfiguration="false" search=".onSearch" filterChange=".onFilterChange" >
+          <fb:FilterBar id="idFBMainView" useToolbar="false" showClearOnFB="true" showFilterConfiguration="false" search=".onSearch" clear=".onClear">
             <fb:filterGroupItems>
               <fb:FilterGroupItem id="idFGI1" name="OrderID" label="{i18n>OrderNumber}" groupName="Group1" visibleInFilterBar="true">
                 <fb:control>

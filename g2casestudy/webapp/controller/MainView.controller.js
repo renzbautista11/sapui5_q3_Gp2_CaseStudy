@@ -21,7 +21,7 @@ sap.ui.define([
 
                 // controls which use method getValue() to retrieve single value input
                 if (oControl instanceof sap.m.Input ||
-                    oControl instanceof sap.m.DateRangeSelection ) {
+                    oControl instanceof sap.m.DateRangeSelection) {
                     let sInputValue = oControl.getValue();
                     // check if input is an integer, if so convert to integer before adding to selected keys
                     if (sInputValue) {
@@ -71,6 +71,21 @@ sap.ui.define([
 
             // apply filters to table binding
             this.oTable.getBinding("items").filter(aTableFilters);
+        },
+
+        // clear filters from filter bar controls and table binding        
+        onClear: function() { 
+            let oFilterGroupItems = this.oFilterBar.getFilterGroupItems();
+            oFilterGroupItems.forEach(oFilterGroupItem => {
+                let oControl = oFilterGroupItem.getControl();
+                if (oControl instanceof sap.m.Input || 
+                    oControl instanceof sap.m.DateRangeSelection) {
+                    oControl.setValue("");
+                } else if (oControl instanceof sap.m.MultiComboBox) {
+                    oControl.setSelectedKeys([]);
+                }
+            });
+            this.oTable.getBinding("items").filter([]);
         }
     });
 });
