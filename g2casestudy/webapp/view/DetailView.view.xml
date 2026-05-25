@@ -1,0 +1,118 @@
+<mvc:View controllerName="sapips.training.g2casestudy.controller.DetailView"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    displayBlock="true">
+
+    <Page id="pageDetailView" title="{i18n>detailsTitle}">
+
+        <content>
+
+            <VBox id="vboxDetails" class="sapUiSmallMargin sapUiResponsiveContentPadding">
+
+                <Panel id="panelOrderDetails"
+                    headerText="{i18n>orderDetails}"
+                    class="sapUiSmallMarginBottom">
+                    <f:SimpleForm id="_IDGenSimpleForm" editable="true"
+                        layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3"
+                        labelSpanM="3" labelSpanS="12" adjustLabelSpan="false"
+                        emptySpanXL="4" emptySpanL="4" emptySpanM="4"  emptySpanS="0"
+                        columnsXL="1" columnsL="1"  columnsM="1">                    
+
+                        <Label id="lblOrderNumber" text="{i18n>OrderNumber}"/>
+                        <Text id="txtOrderID" text="{Order/OrderID}"/>
+
+                        <Label id="lblCreatedOn" text="{i18n>CreatedOn}"/>
+                        <Text id="txtCreatedOn" text="{Order/OrderDate}"/>
+
+                        <Label id="lblReceivingPlant" text="{i18n>ReceivingPlant}"/>
+                        <Text id="txtReceivingPlant" text="{Order/ReceivingPlant}"/>
+
+                        <Label id="lblDeliveringPlant" text="{i18n>DeliveringPlant}"/>
+                        <Text id="txtDeliveringPlant" text="{Order/DeliveringPlant}"/>
+
+                        <Label id="lblStatus" text="{i18n>Status}"/>
+                        <ObjectStatus id="_IDGenObjectStatus"
+                            text="{Order/Status}"
+                            state="Information"/>
+
+                    </f:SimpleForm>
+
+                </Panel>
+
+
+                <Panel id="panelProducts" class="sapUiSmallMarginBottom">
+
+                    <Table id="tblProducts"
+                        headerText="{i18n>Products}"
+                        items="{
+                                path: '/Order_Details',
+                                parameters: {
+                                    expand: 'Products'
+        }
+    }">
+
+                        <columns>
+
+                            <Column id="colProductName">
+                                <Text id="_IDGenText4" text="{i18n>ProductName}"/>
+                            </Column>
+
+                            <Column id="colQuantity">
+                                <Text id="_IDGenText5" text="{i18n>Quantity}"/>
+                            </Column>
+
+                            <Column id="colUnitPrice">
+                                <Text id="_IDGenText6" text="{i18n>UnitPrice}"/>
+                            </Column>
+
+                            <Column id="colTotalPrice">
+                                <Text id="_IDGenText7" text="{i18n>TotalPrice}"/>
+                            </Column>
+
+                        </columns>
+                        <items>
+                            <ColumnListItem id="_IDGenColumnListItem">
+                                <cells>
+                                    <Text id="txtCellProductName" text="{Products/ProductName}"/>
+                                    <Text id="txtCellQuantity" text="{Quantity}"/>
+                                    <Text id="txtCellUnitPrice" text="{UnitPrice}"/>
+                                    <Text id="txtCellTotalPrice" text="{= ${Quantity} * ${UnitPrice} }"/>
+
+                                </cells>
+
+                            </ColumnListItem>
+
+                        </items>
+
+                    </Table>
+
+                </Panel>
+
+            </VBox>
+
+        </content>
+
+
+        <footer>
+
+            <OverflowToolbar id="footerDetails" class="sapUiSmallMarginTop">
+
+                <ToolbarSpacer id="spacerDetails"/>
+
+                <Button id="btnEdit"
+                    text="{i18n>edit}"
+                    press="onEdit"/>
+
+                <Button id="btnCancel"
+                    text="{i18n>cancel}"
+                    press="onCancel"/>
+
+            </OverflowToolbar>
+
+        </footer>
+
+    </Page>
+    
+
+</mvc:View>

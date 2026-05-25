@@ -7,12 +7,12 @@
                     <PropertyRef Name="OrderID" />
                     <PropertyRef Name="ProductID" />
                 </Key>
-                <Property Name="OrderID" Type="Edm.Int32" Nullable="false" />
+                <Property Name="OrderID" Type="Edm.Int32" Nullable="false" MaxLength="6" />
                 <Property Name="ProductID" Type="Edm.Int32" Nullable="false" MaxLength="10" />
                 <Property Name="UnitPrice" Type="Edm.Decimal" Nullable="false" Precision="19" Scale="4" />
                 <Property Name="Quantity" Type="Edm.Int16" Nullable="false" />
                 <NavigationProperty Name="Order" Relationship="NorthwindModel.FK_Order_Details_Orders" ToRole="Orders" FromRole="Order_Details" />
-                <NavigationProperty Name="Product" Relationship="NorthwindModel.FK_Order_Details_Products" ToRole="Products" FromRole="Order_Details" />
+                <NavigationProperty Name="Products" Relationship="NorthwindModel.FK_Order_Details_Products" ToRole="Products" FromRole="Order_Details" />
             </EntityType>
             <EntityType Name="Order">
                 <Key>
@@ -21,7 +21,8 @@
                 <Property Name="OrderID" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
                 <Property Name="CustomerID" Type="Edm.String" MaxLength="5" FixedLength="true" Unicode="true" />
                 <Property Name="OrderDate" Type="Edm.DateTime" Precision="3" />
-                <Property Name="Status" Type="Edm.String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" /><Property Name="ReceivingPlant" Type="Edm.String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+                <Property Name="Status" Type="Edm.String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+                <Property Name="ReceivingPlant" Type="Edm.String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
                 <Property Name="DeliveringPlant" Type="Edm.String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
                 <NavigationProperty Name="Customer" Relationship="NorthwindModel.FK_Orders_Customers" ToRole="Customers" FromRole="Orders" />
                 <NavigationProperty Name="Order_Details" Relationship="NorthwindModel.FK_Order_Details_Orders" ToRole="Order_Details" FromRole="Orders" />
