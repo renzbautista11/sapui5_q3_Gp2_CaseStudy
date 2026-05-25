@@ -1,20 +1,24 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/Filter",    
-	"sap/ui/model/FilterOperator"
-], (Controller, Filter, FilterOperator) => {
+	"sap/ui/model/FilterOperator",
+    "sap/m/MessageBox"
+], (Controller, Filter, FilterOperator, MessageBox) => {
     "use strict";
 
     return Controller.extend("sapips.training.g2casestudy.controller.MainView", {
         onInit: function() {
+            // cache references to table and filter bar for later use
             this.oTable = this.byId("idTabMainView");
             this.oFilterBar = this.byId("idFBMainView");
         },
+
+        // filterbar search
         onSearch: function() {
             let oFilterGroupItems = this.oFilterBar.getFilterGroupItems();
             let aTableFilters = [];
 
-            // Loop through filter group items and create filters based on selected keys or inputs
+            // loop through filter group items and create filters based on selected keys or inputs
             oFilterGroupItems.forEach(oFilterGroupItem => {
                 let oControl = oFilterGroupItem.getControl();
                 let aSelectedKeys = [];
@@ -33,7 +37,7 @@ sap.ui.define([
                 else if (oControl instanceof sap.m.MultiComboBox) {
                     aSelectedKeys = oControl.getSelectedKeys();
                 }
-
+                // create filter objects based on control type
                 let aFilters = aSelectedKeys.map(sSelectedKey => {
                     // process date range selection
                     if (oControl instanceof sap.m.DateRangeSelection) {
@@ -59,7 +63,7 @@ sap.ui.define([
                             value1: sSelectedKey
                         });
                     }
-                });
+                });                
                 // add filters for current filter group item to overall table filters
                 if (aFilters.length > 0) {
                     aTableFilters.push(new Filter({
@@ -86,6 +90,31 @@ sap.ui.define([
                 }
             });
             this.oTable.getBinding("items").filter([]);
+        },
+        // delete selected items from table with confirmation dialog and validation for non-selection
+        onDelete: function(oEvent) { 
+            let aSelectedItems = this.oTable.getSelectedItems();
+            let oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+            let sMessage = "";
+
+            if (aSelectedItems.length > 0) { 
+                sMessage = oResourceBundle.getText("DeleteConfirmation", [aSelectedItems.length]);
+                MessageBox.confirm(sMessage, { actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                                               onClose: function(sAction) {
+                                                if (sAction === MessageBox.Action.YES) { 
+                                                    aSelectedItems.forEach(oItem => { 
+                                                        let oContext = oItem.getBindingContext();
+                                                        oContext.getModel().remove(oContext.getPath());
+                                                    })
+                                                }
+                                                // if no is selected, do nothing and simply close the dialog
+                                               }
+                } )
+            }
+            else {                
+                sMessage = oResourceBundle.getText("NoItemsSelected");
+                MessageBox.error(sMessage);
+            }
         }
     });
 });
