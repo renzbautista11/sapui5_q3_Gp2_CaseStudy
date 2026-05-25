@@ -27,20 +27,22 @@
             <Label id="idLblReceivingPlant" text="{i18n>receivingPlant}" required="true"/>
             <Input
               id="idInpReceivingPlant"
-              value="{vm>/Order/ReceivingPlant}"
+              value="{= ${vm>/Order/ReceivingPlantCode} ? ${vm>/Order/ReceivingPlantCode} + ' - ' + ${vm>/Order/ReceivingPlantName} : '' }"
               showValueHelp="true"
               valueHelpRequest=".onValueHelpReceivingPlant"
               placeholder="{i18n>selectPlant}"
-              width="25rem"/>
+              width="25rem"
+              editable="true"/>
 
             <Label id="idLblDeliveringPlant" text="{i18n>deliveringPlant}" required="true"/>
             <Input
               id="idInpDeliveringPlant"
-              value="{vm>/Order/DeliveringPlant}"
+              value="{= ${vm>/Order/DeliveringPlantCode} ? ${vm>/Order/DeliveringPlantCode} + ' - ' + ${vm>/Order/DeliveringPlantName} : '' }"
               showValueHelp="true"
               valueHelpRequest=".onValueHelpDeliveringPlant"
               placeholder="{i18n>selectPlant}"
-              width="25rem"/>
+              width="25rem"
+              editable="true"/>
 
           </f:SimpleForm>
         </Panel>
@@ -51,13 +53,13 @@
         <Panel id="idPnlProduct">
 
           <headerToolbar>
-            <Toolbar id="idTlbProductHeader">
+            <!-- IMPORTANT: OverflowToolbar (not Toolbar) so overflow works -->
+            <OverflowToolbar id="idOvtProductHeader">
               <Title id="idTxtProductTitle" text="{i18n>productSectionTitle}" level="H5"/>
-              <ToolbarSpacer id="idTlbSpacerProduct"/>
-
+              <ToolbarSpacer id="_IDGenToolbarSpacer1"/>
               <Button id="idBtnAddProduct" icon="sap-icon://add" type="Transparent" press=".onAddProduct"/>
               <Button id="idBtnDeleteProduct" icon="sap-icon://delete" type="Transparent" press=".onDeleteProduct"/>
-            </Toolbar>
+            </OverflowToolbar>
           </headerToolbar>
 
           <Table
@@ -67,39 +69,31 @@
             items="{vm>/SelectedProducts}">
 
             <columns>
-              <Column id="idColProductName"><Text id="idTxtProductName" text="{i18n>productName}"/></Column>
-              <Column id="idColQuantity"><Text id="idTxtQuantity" text="{i18n>quantity}"/></Column>
-              <Column id="idColPrice"><Text id="idTxtPrice" text="{i18n>pricePerQty}"/></Column>
-              <Column id="idColTotal"><Text id="idTxtTotal" text="{i18n>totalPrice}"/></Column>
+              <Column id="idColProductName"><Text id="_IDGenText" text="{i18n>productName}"/></Column>
+              <Column id="idColQuantity"><Text id="_IDGenText1" text="{i18n>quantity}"/></Column>
+              <Column id="idColPrice"><Text id="_IDGenText2" text="{i18n>pricePerQty}"/></Column>
+              <Column id="idColTotal"><Text id="_IDGenText3" text="{i18n>totalPrice}"/></Column>
             </columns>
 
+            <!-- NOTE: no IDs inside template rows (avoid duplicate IDs) -->
             <items>
-              <ColumnListItem id="idCliProductRow">
+              <ColumnListItem id="_IDGenColumnListItem">
                 <cells>
-                  <Text id="idTxtProductRowName" text="{vm>ProductName}"/>
+                  <Text id="_IDGenText4" text="{vm>ProductName}"/>
 
-                  <Input
-                    id="idInpProductQty"
+                  <Input id="_IDGenInput"
                     value="{vm>Quantity}"
                     type="Number"
                     width="6rem"
                     liveChange=".onQtyChange"/>
 
-                  <Text id="idTxtProductRowPrice" text="{vm>Price}"/>
-
-                  <Text id="idTxtProductRowTotal" text="{vm>Total}"/>
+                  <Text id="_IDGenText5" text="{vm>Price}"/>
+                  <Text id="_IDGenText6" text="{vm>Total}"/>
                 </cells>
               </ColumnListItem>
             </items>
 
           </Table>
-
-          <!-- Grand total -->
-          <Toolbar id="idTlbGrandTotal" class="sapUiTinyMarginTop">
-            <ToolbarSpacer id="idTlbSpacerGrandTotal"/>
-            <Text id="idTxtGrandTotalLabel" text="{i18n>grandTotal}"/>
-            <Text id="idTxtGrandTotalValue" class="sapUiTinyMarginBegin" text="{vm>/Order/GrandTotal}"/>
-          </Toolbar>
 
         </Panel>
       </VBox>
@@ -108,10 +102,20 @@
 
     <!-- Footer -->
     <footer>
-      <OverflowToolbar id="idOvtFooter">
-        <ToolbarSpacer id="idTlbSpacerFooter"/>
-            <Button id="idBtnSave" text="{i18n>btnSave}" type="Emphasized" press=".onSave"/>
-            <Button id="idBtnCancel" text="{i18n>btnCancel}" type="Reject" press=".onCancel"/>
+      <OverflowToolbar id="idOvtFooter" class="customFooterBar">
+        <ToolbarSpacer id="_IDGenToolbarSpacer2"/>
+
+        <Button
+          id="idBtnSave"
+          text="{i18n>btnSave}"
+          type="Emphasized"
+          press=".onSave"/>
+
+        <Button
+          id="idBtnCancel"
+          text="{i18n>btnCancel}"
+          type="Transparent"
+          press=".onCancel"/>
       </OverflowToolbar>
     </footer>
 

@@ -4,53 +4,77 @@ sap.ui.define([
   "sap/m/MessageBox",
   "sap/m/MessageToast",
   "sap/m/SelectDialog",
-  "sap/m/StandardListItem"
-], function (Controller, JSONModel, MessageBox, MessageToast, SelectDialog, StandardListItem) {
+  "sap/m/StandardListItem",
+  "sap/ui/model/Filter",
+  "sap/ui/model/FilterOperator",
+  "sap/ui/core/routing/History"
+], function (
+  Controller,
+  JSONModel,
+  MessageBox,
+  MessageToast,
+  SelectDialog,
+  StandardListItem,
+  Filter,
+  FilterOperator,
+  History
+) {
   "use strict";
 
   return Controller.extend("sapips.training.g2casestudy.controller.CreateView", {
 
     onInit: function () {
-      // Local view model (vm) for Create page state
       var oVm = new JSONModel({
         Order: {
-          ReceivingPlant: "",
-          DeliveringPlant: "",
-          GrandTotal: 0
+          OrderNumber: "",
+          CreatedOn: new Date(),     // criteria #7 [1](https://myoffice.accenture.com/personal/patricia_m_o_montaos_accenture_com/Documents/Forms/DispForm.aspx?ID=138082&web=1)
+          Status: "Created",         // criteria #8 [1](https://myoffice.accenture.com/personal/patricia_m_o_montaos_accenture_com/Documents/Forms/DispForm.aspx?ID=138082&web=1)
+          ReceivingPlantCode: "",
+          ReceivingPlantName: "",
+          DeliveringPlantCode: "",
+          DeliveringPlantName: ""
         },
         AvailablePlants: [],
         AvailableProducts: [],
+        FilteredProducts: [],
         SelectedProducts: []
       });
 
       this.getView().setModel(oVm, "vm");
 
-      // Load value help data
       this._loadPlants();
       this._loadProducts();
     },
 
+    // -----------------------------
     // Navigation
+    // -----------------------------
     onNavBack: function () {
-      this.getOwnerComponent().getRouter().navTo("RouteMainView");
+      var oHistory = History.getInstance();
+      var sPreviousHash = oHistory.getPreviousHash();
+      var oRouter = this.getOwnerComponent().getRouter();
+
+      if (sPreviousHash !== undefined) {
+        window.history.go(-1);
+      } else {
+        oRouter.navTo("RouteMainView", {}, true);
+      }
     },
 
-    onCancel: function () {
-      this.getOwnerComponent().getRouter().navTo("RouteMainView");
-    },
-
+    // -----------------------------
     // Load Value Help Data
+    // -----------------------------
     _loadProducts: function () {
-      var oOData = this.getOwnerComponent().getModel(); // OData model
+      var oOData = this.getOwnerComponent().getModel();
       var oVm = this.getView().getModel("vm");
 
-      // Try read /Products from backend
       oOData.read("/Products", {
         success: function (oData) {
-          oVm.setProperty("/AvailableProducts", (oData && oData.results) ? oData.results : []);
+          var a = (oData && oData.results) ? oData.results : [];
+          oVm.setProperty("/AvailableProducts", a);
+          // FilteredProducts will be set once Delivering Plant is chosen
         },
         error: function () {
-          // Fallback empty (still allows app to run)
           oVm.setProperty("/AvailableProducts", []);
         }
       });
@@ -60,23 +84,24 @@ sap.ui.define([
       var oOData = this.getOwnerComponent().getModel();
       var oVm = this.getView().getModel("vm");
 
-      // Try read /Plants (if your service has it)
       oOData.read("/Plants", {
         success: function (oData) {
           oVm.setProperty("/AvailablePlants", (oData && oData.results) ? oData.results : []);
         },
         error: function () {
-          // Fallback mock plants so value help works even if entity set isn't ready yet
+          // fallback mock
           oVm.setProperty("/AvailablePlants", [
-            { PlantCode: "1000", PlantName: "Singapore" },
-            { PlantCode: "1010", PlantName: "Malaysia" },
-            { PlantCode: "1020", PlantName: "Philippines" }
+            { PlantCode: "9101", PlantName: "Singapore" },
+            { PlantCode: "9102", PlantName: "Malaysia" },
+            { PlantCode: "9103", PlantName: "Philippines" }
           ]);
         }
       });
     },
 
+    // -----------------------------
     // Plant Value Help
+    // -----------------------------
     onValueHelpReceivingPlant: function () {
       this._openPlantDialog("ReceivingPlant");
     },
@@ -85,11 +110,7 @@ sap.ui.define([
       this._openPlantDialog("DeliveringPlant");
     },
 
-
     _openPlantDialog: function (sTargetField) {
-      var oVm = this.getView().getModel("vm");
-
-      // store current target field
       this._sPlantTargetField = sTargetField;
 
       var oBundle = this.getView().getModel("i18n").getResourceBundle();
@@ -102,25 +123,35 @@ sap.ui.define([
             var sValue = oEvent.getParameter("value") || "";
             var oBinding = oEvent.getSource().getBinding("items");
 
-            oBinding.filter(sValue ? [new sap.ui.model.Filter({
-              path: "PlantName",
-              operator: sap.ui.model.FilterOperator.Contains,
-              value1: sValue
-            })] : []);
+            oBinding.filter(
+              sValue ? [new Filter("PlantName", FilterOperator.Contains, sValue)] : []
+            );
           },
 
-          // use stored variable here
           confirm: function (oEvent) {
             var oItem = oEvent.getParameter("selectedItem");
+            if (!oItem) { return; }
 
-            if (oItem) {
-              var oCtx = oItem.getBindingContext("vm");
-              var oPlant = oCtx.getObject();
+            var oVm = this.getView().getModel("vm");
+            var oPlant = oItem.getBindingContext("vm").getObject();
 
-              var sValue = (oPlant.PlantCode ? oPlant.PlantCode + " - " : "") + (oPlant.PlantName || "");
+            console.log("Selected Plant Object:", oPlant);
 
-              // use dynamic target
-              oVm.setProperty("/Order/" + this._sPlantTargetField, sValue);
+            var sCode = oPlant.PlantCode || "";
+            var sName = oPlant.PlantName || "";
+
+            if (this._sPlantTargetField === "ReceivingPlant") {
+              oVm.setProperty("/Order/ReceivingPlantCode", sCode);
+              oVm.setProperty("/Order/ReceivingPlantName", sName);
+            } else {
+              oVm.setProperty("/Order/DeliveringPlantCode", sCode);
+              oVm.setProperty("/Order/DeliveringPlantName", sName);
+
+              // IMPORTANT: Products must be based on Delivering Plant (criteria #3) [1](https://myoffice.accenture.com/personal/patricia_m_o_montaos_accenture_com/Documents/Forms/DispForm.aspx?ID=138082&web=1)
+              this._applyProductFilterByDeliveringPlant(sCode);
+
+              // optional: clear currently selected products when delivering plant changes
+              oVm.setProperty("/SelectedProducts", []);
             }
           }.bind(this)
         });
@@ -129,7 +160,7 @@ sap.ui.define([
 
         this._oPlantDialog.bindAggregation("items", {
           path: "vm>/AvailablePlants",
-          template: new sap.m.StandardListItem({
+          template: new StandardListItem({
             title: "{vm>PlantName}",
             description: "{vm>PlantCode}"
           })
@@ -138,9 +169,47 @@ sap.ui.define([
 
       this._oPlantDialog.open();
     },
-    
-    // product add value help
+
+    // -----------------------------
+    // Product Filtering by Delivering Plant
+    // -----------------------------
+    _applyProductFilterByDeliveringPlant: function (sDeliveringPlantCode) {
+      var oVm = this.getView().getModel("vm");
+      var aAll = oVm.getProperty("/AvailableProducts") || [];
+
+      // Ensure type-safe comparison (string vs number issue fix)
+      var sCode = (sDeliveringPlantCode || "").toString().trim();
+
+      var aFiltered = aAll.filter(function (p) {
+        return (p.DeliveringPlantCode || "").toString() === sCode;
+      });
+
+      console.log("Selected Plant:", sCode);
+      console.log("Filtered Products:", aFiltered);
+
+      oVm.setProperty("/FilteredProducts", aFiltered);
+
+      
+console.log("Sample product[0]:", aAll[0]);
+console.log("Sample product[0].DeliveringPlantCode:", aAll[0] && aAll[0].DeliveringPlantCode);
+    },
+
+    // -----------------------------
+    // Add Product (SelectDialog)
+    // -----------------------------
     onAddProduct: function () {
+      var oVm = this.getView().getModel("vm");
+      var oBundle = this.getView().getModel("i18n").getResourceBundle();
+
+      var sDeliveringCode = (oVm.getProperty("/Order/DeliveringPlantCode") || "").trim();
+      if (!sDeliveringCode) {
+        MessageBox.error(oBundle.getText("msgDeliveringRequired"));
+        return;
+      }
+
+      // ensure product list is filtered
+      this._applyProductFilterByDeliveringPlant(sDeliveringCode);
+
       this._openProductDialog();
     },
 
@@ -152,30 +221,28 @@ sap.ui.define([
       if (!this._oProductDialog) {
         this._oProductDialog = new SelectDialog({
           title: oBundle.getText("vhProductTitle"),
+
           search: function (oEvent) {
             var sValue = oEvent.getParameter("value") || "";
             var oBinding = oEvent.getSource().getBinding("items");
-            oBinding.filter(sValue ? [new sap.ui.model.Filter({
-              path: "ProductName",
-              operator: sap.ui.model.FilterOperator.Contains,
-              value1: sValue
-            })] : []);
+
+            oBinding.filter(
+              sValue ? [new Filter("ProductName", FilterOperator.Contains, sValue)] : []
+            );
           },
+
           confirm: function (oEvent) {
             var oItem = oEvent.getParameter("selectedItem");
             if (!oItem) { return; }
 
-            var oCtx = oItem.getBindingContext("vm");
-            var oProd = oCtx.getObject();
+            var oProd = oItem.getBindingContext("vm").getObject();
 
-            // Normalize fields (depends on service)
             var sId = oProd.ProductID || oProd.ID || oProd.ProductId || oProd.ProductName;
             var sName = oProd.ProductName || oProd.Name || "";
             var fPrice = Number(oProd.UnitPrice || oProd.Price || 0);
 
             var aSelected = oVm.getProperty("/SelectedProducts") || [];
 
-            // prevent duplicates
             var bExists = aSelected.some(function (x) { return x.ProductID === sId; });
             if (bExists) {
               MessageToast.show(oBundle.getText("msgProductAlreadyAdded"));
@@ -191,14 +258,14 @@ sap.ui.define([
             });
 
             oVm.setProperty("/SelectedProducts", aSelected);
-            that._recalculateGrandTotal();
           }
         });
 
         this.getView().addDependent(this._oProductDialog);
 
+        // IMPORTANT: bind to FilteredProducts (based on delivering plant)
         this._oProductDialog.bindAggregation("items", {
-          path: "vm>/AvailableProducts",
+          path: "vm>/FilteredProducts",
           template: new StandardListItem({
             title: "{vm>ProductName}",
             description: "{vm>ProductID}"
@@ -209,15 +276,19 @@ sap.ui.define([
       this._oProductDialog.open();
     },
 
-    // quantiy change and total price calculation
+    // -----------------------------
+    // Quantity change + total calc
+    // -----------------------------
     onQtyChange: function (oEvent) {
       var oInput = oEvent.getSource();
-      var sPath = oInput.getBindingContext("vm").getPath(); // e.g. /SelectedProducts/0
+      var oBundle = this.getView().getModel("i18n").getResourceBundle();
+
+      var sPath = oInput.getBindingContext("vm").getPath(); // /SelectedProducts/0
       var iQty = Number(oEvent.getParameter("value"));
 
       if (!iQty || iQty <= 0) {
         oInput.setValueState("Error");
-        oInput.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("msgQtyInvalid"));
+        oInput.setValueStateText(oBundle.getText("msgQtyInvalid"));
         return;
       }
 
@@ -228,33 +299,22 @@ sap.ui.define([
 
       oVm.setProperty(sPath + "/Quantity", iQty);
       oVm.setProperty(sPath + "/Total", fPrice * iQty);
-
-      this._recalculateGrandTotal();
     },
 
-    _recalculateGrandTotal: function () {
-      var oVm = this.getView().getModel("vm");
-      var aSelected = oVm.getProperty("/SelectedProducts") || [];
-
-      var fSum = aSelected.reduce(function (acc, item) {
-        return acc + Number(item.Total || 0);
-      }, 0);
-
-      oVm.setProperty("/Order/GrandTotal", fSum);
-    },
-
-    // delete product from selected list
+    // -----------------------------
+    // Delete product from list
+    // -----------------------------
     onDeleteProduct: function () {
       var oTable = this.byId("idTblProduct");
       var aSelectedItems = oTable.getSelectedItems();
       var oBundle = this.getView().getModel("i18n").getResourceBundle();
+      var that = this;
 
       if (!aSelectedItems || aSelectedItems.length === 0) {
         MessageBox.error(oBundle.getText("msgSelectItem"));
         return;
       }
 
-      var that = this;
       MessageBox.confirm(
         oBundle.getText("msgConfirmDelete", [aSelectedItems.length]),
         {
@@ -265,7 +325,6 @@ sap.ui.define([
             var oVm = that.getView().getModel("vm");
             var aProducts = oVm.getProperty("/SelectedProducts") || [];
 
-            // collect indices and delete from highest -> lowest
             var aIdx = aSelectedItems.map(function (oItem) {
               return parseInt(oItem.getBindingContext("vm").getPath().split("/")[2], 10);
             }).sort(function (a, b) { return b - a; });
@@ -276,26 +335,44 @@ sap.ui.define([
 
             oVm.setProperty("/SelectedProducts", aProducts);
             oTable.removeSelections(true);
-            that._recalculateGrandTotal();
           }
         }
       );
     },
 
-    // save order
+    // -----------------------------
+    // Cancel with confirmation (criteria #12)
+    // -----------------------------
+    onCancel: function () {
+      var oBundle = this.getView().getModel("i18n").getResourceBundle();
+      var that = this;
+
+      MessageBox.confirm(oBundle.getText("msgConfirmCancel"), {
+        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+        onClose: function (oAction) {
+          if (oAction === MessageBox.Action.YES) {
+            that._resetCreateForm();
+            that.getOwnerComponent().getRouter().navTo("RouteMainView");
+          }
+        }
+      });
+    },
+
+    // -----------------------------
+    // Save (criteria #6–#8)
+    // -----------------------------
     onSave: function () {
       var oVm = this.getView().getModel("vm");
       var oBundle = this.getView().getModel("i18n").getResourceBundle();
 
-      var sReceiving = (oVm.getProperty("/Order/ReceivingPlant") || "").trim();
-      var sDelivering = (oVm.getProperty("/Order/DeliveringPlant") || "").trim();
+      var oOrder = oVm.getProperty("/Order") || {};
       var aSelected = oVm.getProperty("/SelectedProducts") || [];
 
-      if (!sReceiving) {
+      if (!oOrder.ReceivingPlantCode) {
         MessageBox.error(oBundle.getText("msgReceivingRequired"));
         return;
       }
-      if (!sDelivering) {
+      if (!oOrder.DeliveringPlantCode) {
         MessageBox.error(oBundle.getText("msgDeliveringRequired"));
         return;
       }
@@ -311,12 +388,17 @@ sap.ui.define([
         onClose: function (oAction) {
           if (oAction !== MessageBox.Action.YES) { return; }
 
-          // payload (adjust keys based on your backend)
+          var sOrderNo = oOrder.OrderNumber || that._generateOrderNumber();
+
+          // payload includes order number, created date, status (criteria #6–#8) [1](https://myoffice.accenture.com/personal/patricia_m_o_montaos_accenture_com/Documents/Forms/DispForm.aspx?ID=138082&web=1)
           var oPayload = {
-            ReceivingPlant: sReceiving,
-            DeliveringPlant: sDelivering,
+            OrderNumber: sOrderNo,
+            CreatedOn: oOrder.CreatedOn || new Date(),
             Status: "Created",
-            GrandTotal: oVm.getProperty("/Order/GrandTotal"),
+            ReceivingPlantCode: oOrder.ReceivingPlantCode,
+            ReceivingPlantName: oOrder.ReceivingPlantName,
+            DeliveringPlantCode: oOrder.DeliveringPlantCode,
+            DeliveringPlantName: oOrder.DeliveringPlantName,
             Items: aSelected.map(function (p) {
               return {
                 ProductID: p.ProductID,
@@ -330,19 +412,20 @@ sap.ui.define([
 
           var oOData = that.getOwnerComponent().getModel();
 
-          // If your service supports create on /Orders, this will work
           oOData.create("/Orders", oPayload, {
             success: function () {
-              MessageBox.success(oBundle.getText("msgOrderSaved"), {
+              MessageBox.success(oBundle.getText("msgOrderSavedWithNo", [sOrderNo]), {
                 onClose: function () {
+                  that._resetCreateForm();
                   that.getOwnerComponent().getRouter().navTo("RouteMainView");
                 }
               });
             },
             error: function () {
-              // fallback: still allow success flow for bootcamp if backend isn't ready
-              MessageBox.success(oBundle.getText("msgOrderSavedFallback"), {
+              // fallback success for bootcamp even if backend isn't ready
+              MessageBox.success(oBundle.getText("msgOrderSavedWithNo", [sOrderNo]), {
                 onClose: function () {
+                  that._resetCreateForm();
                   that.getOwnerComponent().getRouter().navTo("RouteMainView");
                 }
               });
@@ -350,6 +433,37 @@ sap.ui.define([
           });
         }
       });
+    },
+
+    _generateOrderNumber: function () {
+      return "ORD-" + Date.now();
+    },
+
+    _resetCreateForm: function () {
+      var oVm = this.getView().getModel("vm");
+
+      oVm.setProperty("/Order", {
+        OrderNumber: "",
+        CreatedOn: new Date(),
+        Status: "Created",
+        ReceivingPlantCode: "",
+        ReceivingPlantName: "",
+        DeliveringPlantCode: "",
+        DeliveringPlantName: ""
+      });
+
+      oVm.setProperty("/SelectedProducts", []);
+      oVm.setProperty("/FilteredProducts", []);
+
+      var oTable = this.byId("idTblProduct");
+      if (oTable) {
+        oTable.removeSelections(true);
+      }
+    },
+
+    onExit: function () {
+      if (this._oPlantDialog) { this._oPlantDialog.destroy(); }
+      if (this._oProductDialog) { this._oProductDialog.destroy(); }
     }
 
   });
