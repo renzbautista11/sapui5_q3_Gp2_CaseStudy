@@ -11,24 +11,24 @@
         <f:DynamicPageHeader id="idDynPageHdrMainView">
           <fb:FilterBar id="idFBMainView" useToolbar="false" showClearOnFB="true" showFilterConfiguration="false" search=".onSearch" filterChange=".onFilterChange" >
             <fb:filterGroupItems>
-              <fb:FilterGroupItem id="idFGI1" name="OrderNumber" label="{i18n>OrderNumber}" groupName="Group1" visibleInFilterBar="true">
+              <fb:FilterGroupItem id="idFGI1" name="OrderID" label="{i18n>OrderNumber}" groupName="Group1" visibleInFilterBar="true">
                 <fb:control>
                 <Input id="idInpOrderNumber" placeholder="{i18n>OrderNumber}"></Input>
                 </fb:control>
               </fb:FilterGroupItem>
-              <fb:FilterGroupItem id="idFGI2" name="CreatedOn" label="{i18n>CreatedOn}" groupName="Group1" visibleInFilterBar="true">
+              <fb:FilterGroupItem id="idFGI2" name="OrderDate" label="{i18n>CreatedOn}" groupName="Group1" visibleInFilterBar="true">
                 <fb:control>
-                <DateRangeSelection id="idDRSCreatedOn" displayFormat="dd MMM yyyy" valueFormat="yyyy-MM-dd" placeholder="{i18n>CreatedOn}"/>
+                <DateRangeSelection id="idDRSCreatedOn" displayFormat="dd MMM yyyy" placeholder="{i18n>CreatedOn}"/>
                 </fb:control>
               </fb:FilterGroupItem>
               <fb:FilterGroupItem id="idFGI3" name="Status" label="{i18n>Status}" groupName="Group1" visibleInFilterBar="true">
                 <fb:control>
                     <MultiComboBox id="idMCBStatus"
                       name="Status">
-                      <core:Item id="idMCBStatusItem0" key="0" text="Created"/> 
-                      <core:Item id="idMCBStatusItem1" key="1" text="Released"/>
-                      <core:Item id="idMCBStatusItem2" key="2" text="Partially Completed"/>
-                      <core:Item id="idMCBStatusItem3" key="3" text="Delivered"/>
+                      <core:Item id="idMCBStatusItem0" key="Created" text="Created"/> 
+                      <core:Item id="idMCBStatusItem1" key="Released" text="Released"/>
+                      <core:Item id="idMCBStatusItem2" key="Partially Completed" text="Partially Completed"/>
+                      <core:Item id="idMCBStatusItem3" key="Delivered" text="Delivered"/>
                     </MultiComboBox>
                 </fb:control>
               </fb:FilterGroupItem>
