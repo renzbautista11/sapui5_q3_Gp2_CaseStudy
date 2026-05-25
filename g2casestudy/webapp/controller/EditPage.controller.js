@@ -19,8 +19,8 @@ sap.ui.define([
     onInit: function () {
       // Create model for Edit Page
       var oEditModel = new JSONModel({
-        Order: {},
-        Items: []
+        Order: {}, // header info
+        Items: []  // line items, initially empty until loaded from Detail page
       });
       this.getView().setModel(oEditModel, "edit");
 
@@ -105,6 +105,7 @@ sap.ui.define([
       });
     },
 
+    // Add Product to Order
     onAddProduct: function () {
       var oProductsModel = this.getView().getModel("products");
 
@@ -149,7 +150,7 @@ sap.ui.define([
               ProductName: oProduct.ProductName,
               Quantity: iQuantity,
               UnitPrice: fUnitPrice,
-              Total: iQuantity * fUnitPrice
+              TotalPrice: iQuantity * fUnitPrice
             });
 
             oModel.setProperty("/Items", aItems);
@@ -169,6 +170,21 @@ sap.ui.define([
       }
 
       this._oAddDialog.open();
+    },
+
+    onQuantityChange: function (oEvent) {
+      var oInput = oEvent.getSource();
+      var oContext = oInput.getBindingContext("edit");
+      if (!oContext) { return; }
+      
+      var sPath = oContext.getPath();
+      var oModel = this.getView().getModel("edit");
+      var oItem = oModel.getProperty(sPath);
+
+      var iQuantity = Number(oModel.getProperty(sPath + "/Quantity")) || 0;
+      var fUnitPrice = Number(oModel.getProperty(sPath + "/UnitPrice")) || 0;
+
+      oModel.setProperty(sPath + "/Total", iQuantity * fUnitPrice);
     },
 
     onNavBack: function () {
