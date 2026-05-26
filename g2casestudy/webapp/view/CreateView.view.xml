@@ -55,7 +55,14 @@
 
           <headerToolbar>
             <OverflowToolbar id="idOvtProductHeader">
-              <Title id="idTxtProductTitle" text="{i18n>productSectionTitle}" level="H5"/>
+              <Title
+                id="idTxtProductTitle"
+                level="H5"
+                text="{
+                  parts: [{ path: 'vm>/SelectedCount' }],
+                  formatter: '.formatProductTitle'
+                }"
+              />
               <ToolbarSpacer id="_IDGenToolbarSpacer1"/>
               <Button id="idBtnAddProduct" icon="sap-icon://add" type="Transparent" press=".onAddProduct"/>
               <Button id="idBtnDeleteProduct" icon="sap-icon://delete" type="Transparent" press=".onDeleteProduct"/>

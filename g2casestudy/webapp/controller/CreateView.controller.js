@@ -37,7 +37,8 @@ sap.ui.define([
         AvailablePlants: [],
         AvailableProducts: [],
         FilteredProducts: [],
-        SelectedProducts: []
+        SelectedProducts: [],
+        SelectedCount: 0
       });
 
       this.getView().setModel(oVm, "vm");
@@ -142,6 +143,7 @@ sap.ui.define([
               this._applyProductFilterByDeliveringPlant(sCode);
 
               oVm.setProperty("/SelectedProducts", []);
+              oVm.setProperty("/SelectedCount", 0);
             }
           }.bind(this)
         });
@@ -236,6 +238,7 @@ sap.ui.define([
             });
 
             oVm.setProperty("/SelectedProducts", aSelected);
+            that._updateSelectedCount();
           }
         });
 
@@ -307,6 +310,7 @@ sap.ui.define([
             });
 
             oVm.setProperty("/SelectedProducts", aProducts);
+            that._updateSelectedCount();
             oTable.removeSelections(true);
           }
         }
@@ -448,6 +452,7 @@ sap.ui.define([
       });
 
       oVm.setProperty("/SelectedProducts", []);
+      oVm.setProperty("/SelectedCount", 0);
       oVm.setProperty("/FilteredProducts", []);
 
       var oTable = this.byId("idTblProduct");
@@ -509,6 +514,35 @@ sap.ui.define([
     _formatOrderNumber: function (vOrderId) {
       var s = String(vOrderId || "");
       return s.padStart(6, "0");
+    },
+
+    formatProductTitle: function (iCount) {
+      var oBundle;
+
+      try {
+        if (this && this.getView && this.getView().getModel("i18n")) {
+          oBundle = this.getView().getModel("i18n").getResourceBundle();
+        } else if (this && this.getOwnerComponent && this.getOwnerComponent().getModel("i18n")) {
+          oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
+        } else if (sap && sap.ui && sap.ui.getCore && sap.ui.getCore().getModel("i18n")) {
+          oBundle = sap.ui.getCore().getModel("i18n").getResourceBundle();
+        }
+      } catch (e) {
+        oBundle = null;
+      }
+
+      var iSafeCount = iCount || 0; // safety fallback
+      if (oBundle && oBundle.getText) {
+        return oBundle.getText("productSectionTitleWithCount", [iSafeCount]);
+      }
+
+      return "Products (" + iSafeCount + ")";
+    },
+    
+    _updateSelectedCount: function () {
+      var oVm = this.getView().getModel("vm");
+      var aSelected = oVm.getProperty("/SelectedProducts") || [];
+      oVm.setProperty("/SelectedCount", aSelected.length);
     },
 
     onExit: function () {
