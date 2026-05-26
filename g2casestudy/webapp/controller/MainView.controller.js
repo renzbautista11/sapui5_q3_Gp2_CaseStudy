@@ -128,6 +128,13 @@ sap.ui.define([
 
         onNavToCreate: function () {
             this.getOwnerComponent().getRouter().navTo("RouteCreate");
+        },
+        onNavtoDetail: function (oEvent) {
+             let oItem = oEvent.getSource();
+             let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+             const sOrderID = oItem.getBindingContext().getProperty("OrderID");
+             oRouter.navTo("RouteDetailView", { OrderID: sOrderID });
+
         }
     });
 });
