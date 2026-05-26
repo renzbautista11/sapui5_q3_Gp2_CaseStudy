@@ -467,7 +467,7 @@ sap.ui.define([
       var dOrderDate = oOrder.CreatedOn || new Date();
 
       var oPayload = {
-        CustomerID: oOrder.CustomerID || "Cust1",       // optional default if required by your metadata
+        CustomerID: oOrder.CustomerID || "Cust1", 
         OrderDate: dOrderDate,
         Status: "Created",
         ReceivingPlant: sReceiving,
