@@ -34,7 +34,7 @@
       </f:DynamicPageHeader>
     </f:header>
     <f:content>
-      <Table id="idTabMainView" items="{path: '/Orders', sorter: {path: 'OrderID'} }" mode="MultiSelect">
+      <Table id="idTabMainView" items="{path: '/Orders', sorter: {path: 'OrderID'} }" mode="MultiSelect" updateFinished=".onUpdateFinished">
         <headerToolbar>
           <Toolbar id="idTBMainViewTable">
             <Title id="idTitleMainViewTable" text="{i18n>Orders}"/>

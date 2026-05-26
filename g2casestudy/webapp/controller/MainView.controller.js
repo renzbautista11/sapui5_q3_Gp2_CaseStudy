@@ -1,20 +1,28 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/ui/model/Filter",    
-	"sap/ui/model/FilterOperator",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator",
     "sap/m/MessageBox"
 ], (Controller, Filter, FilterOperator, MessageBox) => {
     "use strict";
 
     return Controller.extend("sapips.training.g2casestudy.controller.MainView", {
-        onInit: function() {
+        onInit: function () {
             // cache references to table and filter bar for later use
             this.oTable = this.byId("idTabMainView");
             this.oFilterBar = this.byId("idFBMainView");
         },
+        // set table title with count of items in table after data is loaded or binding context changes
+        onUpdateFinished: function () {
+            const iTotalItems = this.oTable.getItems().length;
+            const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+            const sText = oResourceBundle.getText("Orders");
+            const sTitle = sText + " (" + iTotalItems + ")";
+            this.byId("idTitleMainViewTable").setText(sTitle);
+        },
 
         // filterbar search
-        onSearch: function() {
+        onSearch: function () {
             let oFilterGroupItems = this.oFilterBar.getFilterGroupItems();
             let aTableFilters = [];
 
@@ -30,7 +38,7 @@ sap.ui.define([
                     // check if input is an integer, if so convert to integer before adding to selected keys
                     if (sInputValue) {
                         let sInputValue2 = Number.isInteger(Number(sInputValue)) ? parseInt(sInputValue) : sInputValue;
-                        aSelectedKeys.push(sInputValue2); 
+                        aSelectedKeys.push(sInputValue2);
                     }
                 }
                 // controls which use method getSelectedKeys() to retrieve multiple selected keys
@@ -72,7 +80,7 @@ sap.ui.define([
                             value1: sSelectedKey
                         });
                     }
-                });                
+                });
                 // add filters for current filter group item to overall table filters
                 if (aFilters.length > 0) {
                     aTableFilters.push(new Filter({
@@ -87,11 +95,11 @@ sap.ui.define([
         },
 
         // clear filters from filter bar controls and table binding        
-        onClear: function() { 
+        onClear: function () {
             let oFilterGroupItems = this.oFilterBar.getFilterGroupItems();
             oFilterGroupItems.forEach(oFilterGroupItem => {
                 let oControl = oFilterGroupItem.getControl();
-                if (oControl instanceof sap.m.Input || 
+                if (oControl instanceof sap.m.Input ||
                     oControl instanceof sap.m.DateRangeSelection) {
                     oControl.setValue("");
                 } else if (oControl instanceof sap.m.MultiComboBox) {
@@ -101,40 +109,41 @@ sap.ui.define([
             this.oTable.getBinding("items").filter([]);
         },
         // delete selected items from table with confirmation dialog and validation for non-selection
-        onDelete: function(oEvent) { 
+        onDelete: function (oEvent) {
             let aSelectedItems = this.oTable.getSelectedItems();
             let oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
             let sMessage = "";
 
-            if (aSelectedItems.length > 0) { 
+            if (aSelectedItems.length > 0) {
                 sMessage = oResourceBundle.getText("DeleteConfirmation", [aSelectedItems.length]);
-                MessageBox.confirm(sMessage, { actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-                                               onClose: function(sAction) {
-                                                if (sAction === MessageBox.Action.YES) { 
-                                                    aSelectedItems.forEach(oItem => { 
-                                                        let oContext = oItem.getBindingContext();
-                                                        oContext.getModel().remove(oContext.getPath());
-                                                    })
-                                                }
-                                                // if no is selected, do nothing and simply close the dialog
-                                               }
-                } )
+                MessageBox.confirm(sMessage, {
+                    actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                    onClose: function (sAction) {
+                        if (sAction === MessageBox.Action.YES) {
+                            aSelectedItems.forEach(oItem => {
+                                let oContext = oItem.getBindingContext();
+                                oContext.getModel().remove(oContext.getPath());
+                            })
+                        }
+                        // if no is selected, do nothing and simply close the dialog
+                    }
+                })
             }
-            else {                
+            else {
                 sMessage = oResourceBundle.getText("NoItemsSelected");
                 MessageBox.error(sMessage);
             }
         },
-
+        // navigate to create view
         onNavToCreate: function () {
             this.getOwnerComponent().getRouter().navTo("RouteCreate");
         },
+        // navigate to detail view with selected order ID as route parameter
         onNavtoDetail: function (oEvent) {
-             let oItem = oEvent.getSource();
-             let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-             const sOrderID = oItem.getBindingContext().getProperty("OrderID");
-             oRouter.navTo("RouteDetailView", { OrderID: sOrderID });
-
+            let oItem = oEvent.getSource();
+            let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+            const sOrderID = oItem.getBindingContext().getProperty("OrderID");
+            oRouter.navTo("RouteDetailView", { OrderID: sOrderID });
         }
     });
 });
