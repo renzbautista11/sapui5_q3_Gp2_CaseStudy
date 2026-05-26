@@ -125,7 +125,13 @@ sap.ui.define([
 
             // Get Order Id
             var orderId = this.getView().getModel("edit").getProperty("/Order/OrderID");
-            MessageBox.success("The Order " + orderId + " has been updated successfully.");
+            MessageBox.success("The Order " + orderId + " has been updated successfully.", {
+              actions: [MessageBox.Action.OK],
+              onClose: function () {
+                // Navigate back to Detail page
+                window.history.go(-1);
+              }
+            });
           }
         }.bind(this)
       });
@@ -171,6 +177,7 @@ sap.ui.define([
 
             // Show success message
             MessageBox.success("Selected product(s) deleted.");
+            
           }
         }.bind(this) 
       });
