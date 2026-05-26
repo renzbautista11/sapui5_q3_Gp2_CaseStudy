@@ -89,7 +89,7 @@ sap.ui.define([
       });
     },
 
-    // Change format date to dd MMM YYYY
+    // Change format date to DD MMM YYYY
     formatODataDate: function (sODataDate) {
     if (!sODataDate) {
       return "";
@@ -119,6 +119,7 @@ sap.ui.define([
         onClose: function (sAction) {
           if (sAction === MessageBox.Action.YES) {
 
+            // Get Order Id
             var orderId = this.getView().getModel("edit").getProperty("/Order/OrderID");
             MessageToast.show("The Order " + orderId + " has been updated successfully.");
           }
@@ -189,8 +190,6 @@ sap.ui.define([
 
     // Add Product to Order
     onAddProduct: function () {
-      var oProductsModel = this.getView().getModel("products");
-
       // Lazy create dialog (for resuability)
       if (!this._oAddDialog) {
         this._oAddDialog = new SelectDialog({
@@ -252,20 +251,6 @@ sap.ui.define([
       }
 
       this._oAddDialog.open();
-    },
-
-    onQuantityChange: function (oEvent) {
-      var oInput = oEvent.getSource();
-      var oContext = oInput.getBindingContext("edit");
-      if (!oContext) { return; }
-      
-      var sPath = oContext.getPath();
-      var oModel = this.getView().getModel("edit");
-
-      var iQuantity = Number(oModel.getProperty(sPath + "/Quantity")) || 0;
-      var fUnitPrice = Number(oModel.getProperty(sPath + "/UnitPrice")) || 0;
-
-      oModel.setProperty(sPath + "/TotalPrice", iQuantity * fUnitPrice);
     },
 
     onNavBack: function () {
