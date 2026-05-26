@@ -21,7 +21,7 @@
                     <Input id="inputOrderNumberEP" value="{edit>/Order/OrderID}" editable="false"/>
 
                     <Label id="lblCreatedOnEP" text="Created On"/>
-                    <Input id="inputCreatedOnEP" value="{edit>/Order/OrderDateText}" editable="false"/>
+                    <Input id="inputCreatedOnEP" value="{edit>/Order/OrderDate}" editable="false"/>
 
                     <Label id="lblReceivingPlantEP" text="Receiving Plant"/>
                     <Input id="inputReceivingPlantEP" value="{edit>/Order/ReceivingPlant}" editable="false"/>
@@ -80,8 +80,8 @@
                             <cells>
 
                                 <Text id="txtProductNameEP" text="{edit>ProductName}"/>
-                                <Input id="ipQuantityEP" value="{edit>Quantity}" width="5rem" liveChange="onQuantityChange"/>
-                                <Input id="ipUnitPriceEP" value="{edit>UnitPrice}" width="8rem"/>
+                                <Text id="txtQuantityEP" text="{edit>Quantity}" />
+                                <Text id="txtUnitPriceEP" text="{edit>UnitPrice}" />
                                 <Text id="txtTotalPriceEP" text="{edit>TotalPrice}"/>
 
                             </cells>

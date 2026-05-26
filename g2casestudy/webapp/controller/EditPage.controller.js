@@ -89,6 +89,7 @@ sap.ui.define([
       });
     },
 
+    // Change format date to dd MMM YYYY
     formatODataDate: function (sODataDate) {
     if (!sODataDate) {
       return "";
@@ -117,7 +118,7 @@ sap.ui.define([
         emphasizedAction: MessageBox.Action.YES,
         onClose: function (sAction) {
           if (sAction === MessageBox.Action.YES) {
-            MessageToast.show("The Order <Order Number> has been updated successfully.");
+            MessageToast.show("The Order " + this.getView().getModel("edit").getProperty("/Order/OrderID") + " has been updated successfully.");
           }
         }
       });
