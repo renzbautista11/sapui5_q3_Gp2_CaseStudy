@@ -9,6 +9,7 @@
     id="idCreatePage"
     title="{i18n>createTitle}"
     showNavButton="true"
+    floatingFooter="true"
     navButtonPress=".onNavBack">
 
     <content>
@@ -101,7 +102,7 @@
 
     <!-- footer -->
     <footer>
-      <OverflowToolbar id="idOvtFooter" class="customFooterBar">
+      <OverflowToolbar id="idOvtFooter">
         <ToolbarSpacer id="_IDGenToolbarSpacer2"/>
 
         <Button
