@@ -15,7 +15,7 @@ sap.ui.define([
 ], function (Controller, MessageBox, MessageToast, JSONModel, SelectDialog, StandardListItem, Filter, FilterOperator) {
   "use strict";
 
-  return Controller.extend("g2casestudy.controller.EditPage", {
+  return Controller.extend("sapips.training.g2casestudy.controller.EditPage", {
     onInit: function () {
       // Create model for Edit Page
       var oEditModel = new JSONModel({
@@ -56,7 +56,7 @@ sap.ui.define([
       }
       // If item/s is/are selected
       var iCount = aSelectedContexts.length;
-      MessageBox.confirm("Are you sure you want to delete "+ iCount + " items(?)", {
+      MessageBox.confirm("Are you sure you want to delete "+ iCount + " item(s)?", {
         title: "Confirm Delete",
         actions: [MessageBox.Action.YES, MessageBox.Action.NO],
         emphasizedAction: MessageBox.Action.NO,
@@ -179,12 +179,11 @@ sap.ui.define([
       
       var sPath = oContext.getPath();
       var oModel = this.getView().getModel("edit");
-      var oItem = oModel.getProperty(sPath);
 
       var iQuantity = Number(oModel.getProperty(sPath + "/Quantity")) || 0;
       var fUnitPrice = Number(oModel.getProperty(sPath + "/UnitPrice")) || 0;
 
-      oModel.setProperty(sPath + "/Total", iQuantity * fUnitPrice);
+      oModel.setProperty(sPath + "/TotalPrice", iQuantity * fUnitPrice);
     },
 
     onNavBack: function () {
