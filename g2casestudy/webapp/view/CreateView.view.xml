@@ -39,8 +39,7 @@
               value="{= ${vm>/Order/ReceivingPlantCode} ? ${vm>/Order/ReceivingPlantCode} + ' - ' + ${vm>/Order/ReceivingPlantName} : '' }"
               showValueHelp="true"
               valueHelpRequest=".onValueHelpReceivingPlant"
-              placeholder="{i18n>selectPlant}"
-              width="25rem"
+              width="15rem"
               editable="true"/>
 
             <Label id="idLblDeliveringPlant" text="{i18n>deliveringPlant}" required="true"/>
@@ -49,8 +48,7 @@
               value="{= ${vm>/Order/DeliveringPlantCode} ? ${vm>/Order/DeliveringPlantCode} + ' - ' + ${vm>/Order/DeliveringPlantName} : '' }"
               showValueHelp="true"
               valueHelpRequest=".onValueHelpDeliveringPlant"
-              placeholder="{i18n>selectPlant}"
-              width="25rem"
+              width="15rem"
               editable="true"/>
 
           </f:SimpleForm>
