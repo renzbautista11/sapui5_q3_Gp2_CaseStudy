@@ -126,7 +126,7 @@ sap.ui.define([
 
             // Get Order Id
             var orderId = this.getView().getModel("edit").getProperty("/Order/OrderID");
-            MessageToast.show("The Order " + orderId + " has been updated successfully.");
+            MessageBox.success("The Order " + orderId + " has been updated successfully.");
           }
         }.bind(this)
       });
