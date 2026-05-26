@@ -55,15 +55,15 @@
                         <columns>
 
                             <Column id="colProductName">
-                                <Text id="_IDGenText4" text="{i18n>ProductName}"/>
+                                <Text id="_IDDetailText1" text="{i18n>ProductName}"/>
                             </Column>
 
                             <Column id="colQuantity">
-                                <Text id="_IDGenText5" text="{i18n>Quantity}"/>
+                                <Text id="_IDDetailText2" text="{i18n>Quantity}"/>
                             </Column>
 
                             <Column id="colUnitPrice">
-                                <Text id="_IDGenText6" text="{i18n>UnitPrice}"/>
+                                <Text id="_IDDetailText4" text="{i18n>UnitPrice}"/>
                             </Column>
 
                             <Column id="colTotalPrice">
@@ -72,7 +72,7 @@
 
                         </columns>
                         <items>
-                            <ColumnListItem id="_IDGenColumnListItem">
+                            <ColumnListItem id="_IDGenColumnListItem2">
                                 <cells>
                                     <Text id="txtCellProductName" text="{Products/ProductName}"/>
                                     <Text id="txtCellQuantity" text="{Quantity}"/>

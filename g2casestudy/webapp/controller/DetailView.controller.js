@@ -61,6 +61,7 @@ sap.ui.define([
         }
     });
 
+    const oTemplate = this.byId("_IDGenColumnListItem2").clone();
     oTable.bindItems({
         path: "/Order_Details",
         filters: [
@@ -71,10 +72,9 @@ sap.ui.define([
             )
         ],
         parameters: {
-            "$expand": "Order,Products"
+            expand: "Products"
         },
-        
-        template: oTable.getBindingInfo("items").template
+        template: oTemplate
     });
     oTable.getBinding("items").attachChange(function () {
     var iCount = oTable.getItems().length;
@@ -93,16 +93,19 @@ sap.ui.define([
 
         onEdit: function(){
 
-            const oContext = this.getView().getBindingContext();
-            const sOrderID = oContext && oContext.getProperty("OrderID");
+            const sHash = this.getOwnerComponent()
+                .getRouter()
+                .getHashChanger()
+                .getHash();
+            const orderId = decodeURIComponent(sHash.split("/").pop());
 
-            if (sOrderID) {
-                this.getOwnerComponent()
-                    .getRouter()
-                    .navTo("RouteEditPage", {
-                        OrderID: encodeURIComponent(sOrderID)
-                    });
-            }
+           // const orderId = 122040;
+
+            this.getOwnerComponent()
+                .getRouter()
+                .navTo("RouteEditPage", {
+                    orderId: encodeURIComponent(orderId)
+                });
 
 
         }
