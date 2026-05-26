@@ -27,6 +27,7 @@
                 <NavigationProperty Name="Customer" Relationship="NorthwindModel.FK_Orders_Customers" ToRole="Customers" FromRole="Orders" />
                 <NavigationProperty Name="Order_Details" Relationship="NorthwindModel.FK_Order_Details_Orders" ToRole="Order_Details" FromRole="Orders" />
             </EntityType>
+            
             <EntityType Name="Product">
                 <Key>
                     <PropertyRef Name="ProductID" />
@@ -36,8 +37,10 @@
                 <Property Name="QuantityPerUnit" Type="Edm.String" MaxLength="20" FixedLength="false" Unicode="true" />
                 <Property Name="UnitPrice" Type="Edm.Decimal" Precision="19" Scale="4" />
                 <Property Name="UnitsInStock" Type="Edm.Int16" />
+                <Property Name="DeliveringPlantCode" Type="Edm.String" MaxLength="10" FixedLength="false" Unicode="true" />
                 <NavigationProperty Name="Order_Details" Relationship="NorthwindModel.FK_Order_Details_Products" ToRole="Order_Details" FromRole="Products" />
             </EntityType>
+
             <Association Name="FK_Order_Details_Orders">
                 <End Type="NorthwindModel.Order" Role="Orders" Multiplicity="1" />
                 <End Type="NorthwindModel.Order_Detail" Role="Order_Details" Multiplicity="*" />
