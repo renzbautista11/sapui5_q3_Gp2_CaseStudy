@@ -47,19 +47,6 @@ sap.ui.define([
       this._loadProducts();
     },
 
-    // navigation back to main page
-    onNavBack: function () {
-      var oHistory = History.getInstance();
-      var sPreviousHash = oHistory.getPreviousHash();
-      var oRouter = this.getOwnerComponent().getRouter();
-
-      if (sPreviousHash !== undefined) {
-        window.history.go(-1);
-      } else {
-        oRouter.navTo("RouteMainView", {}, true);
-      }
-    },
-
     // load value
     _loadProducts: function () {
       var oOData = this.getOwnerComponent().getModel();

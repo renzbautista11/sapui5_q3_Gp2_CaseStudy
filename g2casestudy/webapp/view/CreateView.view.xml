@@ -8,9 +8,7 @@
   <Page
     id="idCreatePage"
     title="{i18n>createTitle}"
-    showNavButton="true"
-    floatingFooter="true"
-    navButtonPress=".onNavBack">
+    floatingFooter="true">
 
     <content>
 
