@@ -37,7 +37,7 @@
       <Table id="idTabMainView" items="{path: '/Orders', sorter: {path: 'OrderID'} }" mode="MultiSelect" updateFinished=".onUpdateFinished">
         <headerToolbar>
           <Toolbar id="idTBMainViewTable">
-            <Title id="idTitleMainViewTable" text="{i18n>Orders}"/>
+            <Title id="idTitleMainViewTable"/>
             <ToolbarSpacer id="idTBSpacer1"/>
             <Button id="idBtnAdd" icon="sap-icon://add" tooltip="{i18n>CreateOrder}" press=".onNavToCreate"/>
             <Button id="idBtnDelete" icon="sap-icon://delete" tooltip="{i18n>DeleteOrder}" press=".onDelete"/>
@@ -48,7 +48,7 @@
             <Text id="idColTxtOrderNumber" text="{i18n>OrderNumber}"/>
           </Column>
           <Column id="idCol2" minScreenWidth="Tablet" demandPopin="true">
-            <Text id="idColTxtCreatedOn" text="{i18n>CreatedOn}"/>
+            <Text id="idColTxtCreationDate" text="{i18n>CreationDate}"/>
           </Column>
           <Column id="idCol3" minScreenWidth="Tablet" demandPopin="true">
             <Text id="idColTxtReceivingPlant" text="{i18n>ReceivingPlant}"/>

@@ -140,8 +140,8 @@ sap.ui.define([
         },
         // navigate to detail view with selected order ID as route parameter
         onNavtoDetail: function (oEvent) {
-            let oItem = oEvent.getSource();
-            let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+            const oItem = oEvent.getSource();
+            const oRouter = sap.ui.core.UIComponent.getRouterFor(this);
             const sOrderID = oItem.getBindingContext().getProperty("OrderID");
             oRouter.navTo("RouteDetailView", { OrderID: sOrderID });
         }
