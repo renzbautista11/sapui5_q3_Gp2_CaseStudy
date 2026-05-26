@@ -6,13 +6,12 @@
 sap.ui.define([
   "sap/ui/core/mvc/Controller",
   "sap/m/MessageBox",
-  "sap/m/MessageToast",
   "sap/ui/model/json/JSONModel",
   "sap/m/SelectDialog",
   "sap/m/StandardListItem",
   "sap/ui/model/Filter",
   "sap/ui/model/FilterOperator"
-], function (Controller, MessageBox, MessageToast, JSONModel, SelectDialog, StandardListItem, Filter, FilterOperator) {
+], function (Controller, MessageBox, JSONModel, SelectDialog, StandardListItem, Filter, FilterOperator) {
   "use strict";
 
   return Controller.extend("sapips.training.g2casestudy.controller.EditPage", {
@@ -171,7 +170,7 @@ sap.ui.define([
             oTable.removeSelections(true);
 
             // Show success message
-            MessageToast.show("Selected product(s) deleted.");
+            MessageBox.success("Selected product(s) deleted.");
           }
         }.bind(this) 
       });
@@ -223,7 +222,7 @@ sap.ui.define([
             });
 
             if (bExists) {
-              MessageToast.show("Product is already added.");
+              MessageBox.information("Product is already added.");
               return;
             }
 
@@ -241,7 +240,7 @@ sap.ui.define([
 
             oModel.setProperty("/Items", aItems);
 
-            MessageToast.show("Product added to the order.");
+            MessageBox.success("Product added to the order.");
           }.bind(this)
         });
 
