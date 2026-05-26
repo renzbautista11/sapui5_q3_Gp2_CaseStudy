@@ -118,9 +118,11 @@ sap.ui.define([
         emphasizedAction: MessageBox.Action.YES,
         onClose: function (sAction) {
           if (sAction === MessageBox.Action.YES) {
-            MessageToast.show("The Order " + this.getView().getModel("edit").getProperty("/Order/OrderID") + " has been updated successfully.");
+
+            var orderId = this.getView().getModel("edit").getProperty("/Order/OrderID");
+            MessageToast.show("The Order " + orderId + " has been updated successfully.");
           }
-        }
+        }.bind(this)
       });
     },
 
