@@ -113,7 +113,7 @@
         <Button
           id="idBtnCancel"
           text="{i18n>btnCancel}"
-          type="Transparent"
+          type="Reject"
           press=".onCancel"/>
       </OverflowToolbar>
     </footer>
