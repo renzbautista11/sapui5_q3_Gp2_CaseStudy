@@ -1,0 +1,123 @@
+<mvc:View
+  controllerName="sapips.training.g2casestudy.controller.CreateView"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.ui.layout.form"
+  xmlns:core="sap.ui.core">
+
+  <Page
+    id="idCreatePage"
+    title="{i18n>createTitle}"
+    showNavButton="true"
+    floatingFooter="true"
+    navButtonPress=".onNavBack">
+
+    <content>
+
+      <!-- order detail -->
+      <VBox id="idVboxOrderSection" class="sapUiSmallMargin">
+        <Panel id="idPnlOrderDetail" headerText="{i18n>orderDetail}" class="sapUiContentPadding">
+          <f:SimpleForm
+            id="idFrmOrderDetail"
+            editable="true"
+            layout="ResponsiveGridLayout"
+            labelSpanM="4"
+            emptySpanL="0"
+            columnsL="1">
+
+            <Label id="idLblReceivingPlant" text="{i18n>receivingPlant}" required="true"/>
+            <Input
+              id="idInpReceivingPlant"
+              value="{= ${vm>/Order/ReceivingPlantCode} ? ${vm>/Order/ReceivingPlantCode} + ' - ' + ${vm>/Order/ReceivingPlantName} : '' }"
+              showValueHelp="true"
+              valueHelpRequest=".onValueHelpReceivingPlant"
+              placeholder="{i18n>selectPlant}"
+              width="25rem"
+              editable="true"/>
+
+            <Label id="idLblDeliveringPlant" text="{i18n>deliveringPlant}" required="true"/>
+            <Input
+              id="idInpDeliveringPlant"
+              value="{= ${vm>/Order/DeliveringPlantCode} ? ${vm>/Order/DeliveringPlantCode} + ' - ' + ${vm>/Order/DeliveringPlantName} : '' }"
+              showValueHelp="true"
+              valueHelpRequest=".onValueHelpDeliveringPlant"
+              placeholder="{i18n>selectPlant}"
+              width="25rem"
+              editable="true"/>
+
+          </f:SimpleForm>
+        </Panel>
+      </VBox>
+
+      <!-- product section -->
+      <VBox id="idVboxProductSection" class="sapUiSmallMargin">
+        <Panel id="idPnlProduct">
+
+          <headerToolbar>
+            <OverflowToolbar id="idOvtProductHeader">
+              <Title id="idTxtProductTitle" text="{i18n>productSectionTitle}" level="H5"/>
+              <ToolbarSpacer id="_IDGenToolbarSpacer1"/>
+              <Button id="idBtnAddProduct" icon="sap-icon://add" type="Transparent" press=".onAddProduct"/>
+              <Button id="idBtnDeleteProduct" icon="sap-icon://delete" type="Transparent" press=".onDeleteProduct"/>
+            </OverflowToolbar>
+          </headerToolbar>
+
+          <Table
+            id="idTblProduct"
+            mode="MultiSelect"
+            noDataText="{i18n>noProducts}"
+            items="{vm>/SelectedProducts}">
+
+            <columns>
+              <Column id="idColProductName"><Text id="_IDGenText" text="{i18n>productName}"/></Column>
+              <Column id="idColQuantity"><Text id="_IDGenText1" text="{i18n>quantity}"/></Column>
+              <Column id="idColPrice"><Text id="_IDGenText2" text="{i18n>pricePerQty}"/></Column>
+              <Column id="idColTotal"><Text id="_IDGenText3" text="{i18n>totalPrice}"/></Column>
+            </columns>
+            
+            <!-- template for table rows -->
+            <items>
+              <ColumnListItem id="_IDGenColumnListItem">
+                <cells>
+                  <Text id="_IDGenText4" text="{vm>ProductName}"/>
+
+                  <Input id="_IDGenInput"
+                    value="{vm>Quantity}"
+                    type="Number"
+                    width="6rem"
+                    liveChange=".onQtyChange"/>
+
+                  <Text id="_IDGenText5" text="{vm>Price}"/>
+                  <Text id="_IDGenText6" text="{vm>Total}"/>
+                </cells>
+              </ColumnListItem>
+            </items>
+
+          </Table>
+
+        </Panel>
+      </VBox>
+
+    </content>
+
+    <!-- footer -->
+    <footer>
+      <OverflowToolbar id="idOvtFooter">
+        <ToolbarSpacer id="_IDGenToolbarSpacer2"/>
+
+        <Button
+          id="idBtnSave"
+          text="{i18n>btnSave}"
+          type="Emphasized"
+          press=".onSave"/>
+
+        <Button
+          id="idBtnCancel"
+          text="{i18n>btnCancel}"
+          type="Reject"
+          press=".onCancel"/>
+      </OverflowToolbar>
+    </footer>
+
+  </Page>
+</mvc:View>

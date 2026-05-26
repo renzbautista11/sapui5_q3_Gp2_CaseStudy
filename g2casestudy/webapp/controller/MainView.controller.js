@@ -124,6 +124,10 @@ sap.ui.define([
                 sMessage = oResourceBundle.getText("NoItemsSelected");
                 MessageBox.error(sMessage);
             }
+        },
+
+        onNavToCreate: function () {
+            this.getOwnerComponent().getRouter().navTo("RouteCreate");
         }
     });
 });
