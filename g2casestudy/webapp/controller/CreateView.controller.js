@@ -27,8 +27,8 @@ sap.ui.define([
       var oVm = new JSONModel({
         Order: {
           OrderNumber: "",
-          CreatedOn: new Date(),     // criteria #7 [1](https://myoffice.accenture.com/personal/patricia_m_o_montaos_accenture_com/Documents/Forms/DispForm.aspx?ID=138082&web=1)
-          Status: "Created",         // criteria #8 [1](https://myoffice.accenture.com/personal/patricia_m_o_montaos_accenture_com/Documents/Forms/DispForm.aspx?ID=138082&web=1)
+          CreatedOn: new Date(),
+          Status: "Created",
           ReceivingPlantCode: "",
           ReceivingPlantName: "",
           DeliveringPlantCode: "",
@@ -46,9 +46,7 @@ sap.ui.define([
       this._loadProducts();
     },
 
-    // -----------------------------
-    // Navigation
-    // -----------------------------
+    // navigation back to main page
     onNavBack: function () {
       var oHistory = History.getInstance();
       var sPreviousHash = oHistory.getPreviousHash();
@@ -61,9 +59,7 @@ sap.ui.define([
       }
     },
 
-    // -----------------------------
-    // Load Value Help Data
-    // -----------------------------
+    // load value
     _loadProducts: function () {
       var oOData = this.getOwnerComponent().getModel();
       var oVm = this.getView().getModel("vm");
@@ -72,7 +68,6 @@ sap.ui.define([
         success: function (oData) {
           var a = (oData && oData.results) ? oData.results : [];
           oVm.setProperty("/AvailableProducts", a);
-          // FilteredProducts will be set once Delivering Plant is chosen
         },
         error: function () {
           oVm.setProperty("/AvailableProducts", []);
@@ -89,7 +84,6 @@ sap.ui.define([
           oVm.setProperty("/AvailablePlants", (oData && oData.results) ? oData.results : []);
         },
         error: function () {
-          // fallback mock
           oVm.setProperty("/AvailablePlants", [
             { PlantCode: "9101", PlantName: "Singapore" },
             { PlantCode: "9102", PlantName: "Malaysia" },
@@ -99,9 +93,7 @@ sap.ui.define([
       });
     },
 
-    // -----------------------------
-    // Plant Value Help
-    // -----------------------------
+    // plant value
     onValueHelpReceivingPlant: function () {
       this._openPlantDialog("ReceivingPlant");
     },
@@ -147,10 +139,8 @@ sap.ui.define([
               oVm.setProperty("/Order/DeliveringPlantCode", sCode);
               oVm.setProperty("/Order/DeliveringPlantName", sName);
 
-              // IMPORTANT: Products must be based on Delivering Plant (criteria #3) [1](https://myoffice.accenture.com/personal/patricia_m_o_montaos_accenture_com/Documents/Forms/DispForm.aspx?ID=138082&web=1)
               this._applyProductFilterByDeliveringPlant(sCode);
 
-              // optional: clear currently selected products when delivering plant changes
               oVm.setProperty("/SelectedProducts", []);
             }
           }.bind(this)
@@ -170,33 +160,22 @@ sap.ui.define([
       this._oPlantDialog.open();
     },
 
-    // -----------------------------
-    // Product Filtering by Delivering Plant
-    // -----------------------------
+    // product filter based on delivering plant
     _applyProductFilterByDeliveringPlant: function (sDeliveringPlantCode) {
       var oVm = this.getView().getModel("vm");
       var aAll = oVm.getProperty("/AvailableProducts") || [];
 
-      // Ensure type-safe comparison (string vs number issue fix)
       var sCode = (sDeliveringPlantCode || "").toString().trim();
 
       var aFiltered = aAll.filter(function (p) {
         return (p.DeliveringPlantCode || "").toString() === sCode;
       });
 
-      console.log("Selected Plant:", sCode);
-      console.log("Filtered Products:", aFiltered);
-
       oVm.setProperty("/FilteredProducts", aFiltered);
 
-      
-console.log("Sample product[0]:", aAll[0]);
-console.log("Sample product[0].DeliveringPlantCode:", aAll[0] && aAll[0].DeliveringPlantCode);
     },
 
-    // -----------------------------
-    // Add Product (SelectDialog)
-    // -----------------------------
+    // add prouct dialog
     onAddProduct: function () {
       var oVm = this.getView().getModel("vm");
       var oBundle = this.getView().getModel("i18n").getResourceBundle();
@@ -207,7 +186,6 @@ console.log("Sample product[0].DeliveringPlantCode:", aAll[0] && aAll[0].Deliver
         return;
       }
 
-      // ensure product list is filtered
       this._applyProductFilterByDeliveringPlant(sDeliveringCode);
 
       this._openProductDialog();
@@ -263,7 +241,6 @@ console.log("Sample product[0].DeliveringPlantCode:", aAll[0] && aAll[0].Deliver
 
         this.getView().addDependent(this._oProductDialog);
 
-        // IMPORTANT: bind to FilteredProducts (based on delivering plant)
         this._oProductDialog.bindAggregation("items", {
           path: "vm>/FilteredProducts",
           template: new StandardListItem({
@@ -276,9 +253,7 @@ console.log("Sample product[0].DeliveringPlantCode:", aAll[0] && aAll[0].Deliver
       this._oProductDialog.open();
     },
 
-    // -----------------------------
-    // Quantity change + total calc
-    // -----------------------------
+    // quantity change and total calculation
     onQtyChange: function (oEvent) {
       var oInput = oEvent.getSource();
       var oBundle = this.getView().getModel("i18n").getResourceBundle();
@@ -301,9 +276,7 @@ console.log("Sample product[0].DeliveringPlantCode:", aAll[0] && aAll[0].Deliver
       oVm.setProperty(sPath + "/Total", fPrice * iQty);
     },
 
-    // -----------------------------
-    // Delete product from list
-    // -----------------------------
+    // delete a product from selected products
     onDeleteProduct: function () {
       var oTable = this.byId("idTblProduct");
       var aSelectedItems = oTable.getSelectedItems();
@@ -340,9 +313,7 @@ console.log("Sample product[0].DeliveringPlantCode:", aAll[0] && aAll[0].Deliver
       );
     },
 
-    // -----------------------------
-    // Cancel with confirmation (criteria #12)
-    // -----------------------------
+    // cancel and reset form
     onCancel: function () {
       var oBundle = this.getView().getModel("i18n").getResourceBundle();
       var that = this;
@@ -358,121 +329,106 @@ console.log("Sample product[0].DeliveringPlantCode:", aAll[0] && aAll[0].Deliver
       });
     },
 
-    // -----------------------------
-    // Save (criteria #6–#8)
-    // -----------------------------
+    // saving the order and order details
+    onSave: function () {
+      var oVm = this.getView().getModel("vm");
+      var oBundle = this.getView().getModel("i18n").getResourceBundle();
 
-onSave: function () {
-  var oVm = this.getView().getModel("vm");
-  var oBundle = this.getView().getModel("i18n").getResourceBundle();
+      var oOrder = oVm.getProperty("/Order") || {};
+      var aSelected = oVm.getProperty("/SelectedProducts") || [];
+      var that = this;
 
-  var oOrder = oVm.getProperty("/Order") || {};
-  var aSelected = oVm.getProperty("/SelectedProducts") || [];
-  var that = this;
+      if (!oOrder.ReceivingPlantCode) {
+        MessageBox.error(oBundle.getText("msgReceivingRequired"));
+        return;
+      }
 
-  // ✅ VALIDATION
-  if (!oOrder.ReceivingPlantCode) {
-    MessageBox.error(oBundle.getText("msgReceivingRequired"));
-    return;
-  }
+      if (!oOrder.DeliveringPlantCode) {
+        MessageBox.error(oBundle.getText("msgDeliveringRequired"));
+        return;
+      }
 
-  if (!oOrder.DeliveringPlantCode) {
-    MessageBox.error(oBundle.getText("msgDeliveringRequired"));
-    return;
-  }
+      if (!aSelected.length) {
+        MessageBox.error(oBundle.getText("msgAtLeastOneProduct"));
+        return;
+      }
 
-  if (!aSelected.length) {
-    MessageBox.error(oBundle.getText("msgAtLeastOneProduct"));
-    return;
-  }
+      MessageBox.confirm(oBundle.getText("msgConfirmSave"), {
+        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+        onClose: function (oAction) {
+          if (oAction !== MessageBox.Action.YES) { return; }
 
-  // ✅ CONFIRM SAVE
-  MessageBox.confirm(oBundle.getText("msgConfirmSave"), {
-    actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-    onClose: function (oAction) {
-      if (oAction !== MessageBox.Action.YES) { return; }
+          that._createOrder()
+            .then(function (oCreatedOrder) {
 
-      // ✅ STEP 1: CREATE ORDER (mock/backend-style)
-      that._createOrder()
-        .then(function (oCreatedOrder) {
+              console.log("Created Order Response:", oCreatedOrder);
 
-          console.log("Created Order Response:", oCreatedOrder);
+              var iOrderId = oCreatedOrder.OrderID;
 
-          var iOrderId = oCreatedOrder.OrderID;
+              return that._createOrderDetails(iOrderId).then(function () {
+                return iOrderId;
+              });
+            })
 
-          // ✅ STEP 2: CREATE ORDER DETAILS
-          return that._createOrderDetails(iOrderId).then(function () {
-            return iOrderId;
-          });
-        })
+            .then(function (iOrderId) {
 
-        .then(function (iOrderId) {
+              var sFormattedOrderNo = that._formatOrderNumber(iOrderId);
 
-          // ✅ FORMAT ORDER NUMBER (012205)
-          var sFormattedOrderNo = that._formatOrderNumber(iOrderId);
+              var oComponent = that.getOwnerComponent();
+              var oModel = oComponent.getModel();
 
-          // ✅ ✅ BUILD FINAL PAYLOAD FOR MAIN PAGE
-          var oComponent = that.getOwnerComponent();
-          var oModel = oComponent.getModel();
+              var oOrder = oVm.getProperty("/Order");
+              var aSelected = oVm.getProperty("/SelectedProducts");
 
-          var oOrder = oVm.getProperty("/Order");
-          var aSelected = oVm.getProperty("/SelectedProducts");
+              var oFinalOrderPayload = {
+                OrderID: sFormattedOrderNo,
+                CustomerID: "Cust1",
+                OrderDate: oOrder.CreatedOn || new Date(),
+                Status: "Created",
+                ReceivingPlant: oOrder.ReceivingPlantCode + " - " + oOrder.ReceivingPlantName,
+                DeliveringPlant: oOrder.DeliveringPlantCode + " - " + oOrder.DeliveringPlantName
+              };
 
-          // ✅ ORDER (HEADER)
-          var oFinalOrderPayload = {
-            OrderID: sFormattedOrderNo,
-            CustomerID: "Cust1",
-            OrderDate: oOrder.CreatedOn || new Date(),
-            Status: "Created",
-            ReceivingPlant: oOrder.ReceivingPlantCode + " - " + oOrder.ReceivingPlantName,
-            DeliveringPlant: oOrder.DeliveringPlantCode + " - " + oOrder.DeliveringPlantName
-          };
+              var aFinalOrderDetails = aSelected.map(function (p) {
+                return {
+                  OrderID: sFormattedOrderNo,
+                  ProductID: p.ProductID,
+                  UnitPrice: p.Price,
+                  Quantity: p.Quantity
+                };
+              });
 
-          // ✅ ORDER DETAILS (ITEMS)
-          var aFinalOrderDetails = aSelected.map(function (p) {
-            return {
-              OrderID: sFormattedOrderNo,
-              ProductID: p.ProductID,
-              UnitPrice: p.Price,
-              Quantity: p.Quantity
-            };
-          });
+              var aOrders = oModel.getProperty("/Orders") || [];
+              aOrders.push(oFinalOrderPayload);
+              oModel.setProperty("/Orders", aOrders);
 
-          // ✅ PUSH TO MAIN PAGE MODEL (Orders)
-          var aOrders = oModel.getProperty("/Orders") || [];
-          aOrders.push(oFinalOrderPayload);
-          oModel.setProperty("/Orders", aOrders);
+              var aOrderDetails = oModel.getProperty("/Order_Details") || [];
+              aFinalOrderDetails.forEach(function (item) {
+                aOrderDetails.push(item);
+              });
+              oModel.setProperty("/Order_Details", aOrderDetails);
 
-          // ✅ PUSH TO MAIN PAGE MODEL (Order_Details)
-          var aOrderDetails = oModel.getProperty("/Order_Details") || [];
-          aFinalOrderDetails.forEach(function (item) {
-            aOrderDetails.push(item);
-          });
-          oModel.setProperty("/Order_Details", aOrderDetails);
+              oModel.refresh(true);
 
-          // ✅ OPTIONAL REFRESH
-          oModel.refresh(true);
+              MessageBox.success(
+                oBundle.getText("msgOrderSavedWithNo", [sFormattedOrderNo]),
+                {
+                  onClose: function () {
+                    that._resetCreateForm();
+                    that.getOwnerComponent().getRouter().navTo("RouteMainView");
+                  }
+                }
+              );
+            })
 
-          // ✅ SUCCESS MESSAGE
-          MessageBox.success(
-            oBundle.getText("msgOrderSavedWithNo", [sFormattedOrderNo]),
-            {
-              onClose: function () {
-                that._resetCreateForm();
-                that.getOwnerComponent().getRouter().navTo("RouteMainView");
-              }
-            }
-          );
-        })
+            .catch(function (err) {
+              console.error("Save failed:", err);
+              MessageBox.error(oBundle.getText("msgSaveFailed"));
+            });
 
-        .catch(function (err) {
-          console.error("Save failed:", err);
-          MessageBox.error(oBundle.getText("msgSaveFailed"));
-        });
-
-    }
-  });
-},
+        }
+      });
+    },
 
     _generateOrderNumber: function () {
       return "ORD-" + Date.now();
@@ -505,11 +461,9 @@ onSave: function () {
       var oOrder = oVm.getProperty("/Order") || {};
       var oModel = this.getOwnerComponent().getModel();
 
-      // Build display strings like main page: "9101 - Singapore"
       var sReceiving = (oOrder.ReceivingPlantCode || "") + " - " + (oOrder.ReceivingPlantName || "");
       var sDelivering = (oOrder.DeliveringPlantCode || "") + " - " + (oOrder.DeliveringPlantName || "");
 
-      // OData metadata field is OrderDate (Edm.DateTime), not CreatedOn
       var dOrderDate = oOrder.CreatedOn || new Date();
 
       var oPayload = {
@@ -534,7 +488,6 @@ onSave: function () {
       var aItems = oVm.getProperty("/SelectedProducts") || [];
 
       var aPromises = aItems.map(function (p) {
-        // Map your VM fields to Order_Detail fields (UnitPrice + Quantity + ProductID + OrderID)
         var oDetailPayload = {
           OrderID: iOrderId,
           ProductID: Number(p.ProductID),
@@ -554,7 +507,6 @@ onSave: function () {
     },
 
     _formatOrderNumber: function (vOrderId) {
-      // UI display: 012201 style (pad to 6 digits)
       var s = String(vOrderId || "");
       return s.padStart(6, "0");
     },

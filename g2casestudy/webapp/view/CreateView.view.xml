@@ -13,7 +13,7 @@
 
     <content>
 
-      <!-- Order detail -->
+      <!-- order detail -->
       <VBox id="idVboxOrderSection" class="sapUiSmallMargin">
         <Panel id="idPnlOrderDetail" headerText="{i18n>orderDetail}" class="sapUiContentPadding">
           <f:SimpleForm
@@ -48,12 +48,11 @@
         </Panel>
       </VBox>
 
-      <!-- Product section -->
+      <!-- product section -->
       <VBox id="idVboxProductSection" class="sapUiSmallMargin">
         <Panel id="idPnlProduct">
 
           <headerToolbar>
-            <!-- IMPORTANT: OverflowToolbar (not Toolbar) so overflow works -->
             <OverflowToolbar id="idOvtProductHeader">
               <Title id="idTxtProductTitle" text="{i18n>productSectionTitle}" level="H5"/>
               <ToolbarSpacer id="_IDGenToolbarSpacer1"/>
@@ -74,8 +73,8 @@
               <Column id="idColPrice"><Text id="_IDGenText2" text="{i18n>pricePerQty}"/></Column>
               <Column id="idColTotal"><Text id="_IDGenText3" text="{i18n>totalPrice}"/></Column>
             </columns>
-
-            <!-- NOTE: no IDs inside template rows (avoid duplicate IDs) -->
+            
+            <!-- template for table rows -->
             <items>
               <ColumnListItem id="_IDGenColumnListItem">
                 <cells>
@@ -100,7 +99,7 @@
 
     </content>
 
-    <!-- Footer -->
+    <!-- footer -->
     <footer>
       <OverflowToolbar id="idOvtFooter" class="customFooterBar">
         <ToolbarSpacer id="_IDGenToolbarSpacer2"/>
