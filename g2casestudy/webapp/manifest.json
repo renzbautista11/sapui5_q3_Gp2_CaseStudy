@@ -97,6 +97,9 @@
           ]
         },
         {
+          "name": "RouteDetailView",
+          "pattern": "DetailView/{OrderID}",
+          "target": ["TargetDetailView"]
           "name": "RouteCreate",
           "pattern": "create",
           "target": ["TargetCreate"]
@@ -107,6 +110,9 @@
           "id": "MainView",
           "name": "MainView"
         },
+        "TargetDetailView": {
+          "id": "DetailView",
+          "name": "DetailView"
         "TargetCreate": {
           "id": "CreateView",
           "name": "CreateView"
