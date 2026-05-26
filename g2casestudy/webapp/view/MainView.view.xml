@@ -1,83 +1,77 @@
 <mvc:View controllerName="sapips.training.g2casestudy.controller.MainView"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:core="sap.ui.core"
-    xmlns:f="sap.f"
-    xmlns:fb="sap.ui.comp.filterbar"
-    core:require="{formatter: 'sapips/training/g2casestudy/model/formatter'}"
-    >
-    <f:DynamicPage id="idDynPageMainView">
-      <f:header>
-        <f:DynamicPageHeader id="idDynPageHdrMainView">
-          <fb:FilterBar id="idFBMainView" useToolbar="false" showClearOnFB="true" showFilterConfiguration="false" search=".onSearch" clear=".onClear">
-            <fb:filterGroupItems>
-              <fb:FilterGroupItem id="idFGI1" name="OrderID" label="{i18n>OrderNumber}" groupName="Group1" visibleInFilterBar="true">
-                <fb:control>
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:f="sap.f"
+  xmlns:fb="sap.ui.comp.filterbar" core:require="{formatter: 'sapips/training/g2casestudy/model/formatter'}">
+  <f:DynamicPage id="idDynPageMainView">
+    <f:header>
+      <f:DynamicPageHeader id="idDynPageHdrMainView">
+        <fb:FilterBar id="idFBMainView" useToolbar="false" showClearOnFB="true" showFilterConfiguration="false" search=".onSearch" clear=".onClear">
+          <fb:filterGroupItems>
+            <fb:FilterGroupItem id="idFGI1" name="OrderID" label="{i18n>OrderNumber}" groupName="Group1" visibleInFilterBar="true">
+              <fb:control>
                 <Input id="idInpOrderNumber" placeholder="{i18n>OrderNumber}"></Input>
-                </fb:control>
-              </fb:FilterGroupItem>
-              <fb:FilterGroupItem id="idFGI2" name="OrderDate" label="{i18n>CreatedOn}" groupName="Group1" visibleInFilterBar="true">
-                <fb:control>
+              </fb:control>
+            </fb:FilterGroupItem>
+            <fb:FilterGroupItem id="idFGI2" name="OrderDate" label="{i18n>CreatedOn}" groupName="Group1" visibleInFilterBar="true">
+              <fb:control>
                 <DateRangeSelection id="idDRSCreatedOn" displayFormat="dd MMM yyyy" placeholder="{i18n>CreatedOn}"/>
-                </fb:control>
-              </fb:FilterGroupItem>
-              <fb:FilterGroupItem id="idFGI3" name="Status" label="{i18n>Status}" groupName="Group1" visibleInFilterBar="true">
-                <fb:control>
-                    <MultiComboBox id="idMCBStatus"
-                      name="Status">
-                      <core:Item id="idMCBStatusItem0" key="Created" text="Created"/> 
-                      <core:Item id="idMCBStatusItem1" key="Released" text="Released"/>
-                      <core:Item id="idMCBStatusItem2" key="Partially Completed" text="Partially Completed"/>
-                      <core:Item id="idMCBStatusItem3" key="Delivered" text="Delivered"/>
-                    </MultiComboBox>
-                </fb:control>
-              </fb:FilterGroupItem>
-            </fb:filterGroupItems>
-          </fb:FilterBar>
-        </f:DynamicPageHeader>
-      </f:header>
-      <f:content>
-      <Table id="idTabMainView"
-            items="{path: '/Orders', sorter: {path: 'OrderID'} }"
-            mode="MultiSelect">
-       <headerToolbar>
-        <Toolbar id="idTBMainViewTable">
-         <Title id="idTitleMainViewTable" text="{i18n>Orders}"/>
-         <ToolbarSpacer id="idTBSpacer1"/>
-         <Button id="idBtnAdd" icon="sap-icon://add" tooltip="{i18n>CreateOrder}" press=".onNavToCreate"/>
-         <Button id="idBtnDelete" icon="sap-icon://delete" tooltip="{i18n>DeleteOrder}" press=".onDelete"/>
-        </Toolbar>
-       </headerToolbar>
-       <columns>
-        <Column id="idCol1" minScreenWidth="Tablet" demandPopin="true">
-         <Text id="idColTxtOrderNumber" text="{i18n>OrderNumber}"/>                     
-        </Column>
-        <Column id="idCol2" minScreenWidth="Tablet" demandPopin="true">
-         <Text id="idColTxtCreatedOn" text="{i18n>CreatedOn}"/>                     
-        </Column>
-        <Column id="idCol3" minScreenWidth="Tablet" demandPopin="true">
-         <Text id="idColTxtReceivingPlant" text="{i18n>ReceivingPlant}"/>                     
-        </Column>
-        <Column id="idCol4" minScreenWidth="Tablet" demandPopin="true">
-         <Text id="idColTxtDeliveringPlant" text="{i18n>DeliveringPlant}"/>                     
-        </Column>
-        <Column id="idCol5" minScreenWidth="Tablet" demandPopin="true">
-        <Text id="idColTxtStatus" text="{i18n>Status}"/>                     
-        </Column>
-       </columns>
-       <items>
-        <ColumnListItem id="idColumnListItem1" type="Navigation" press=".onNavtoDetail">
-         <cells>
-          <Text id="idCellOrderID" text="{OrderID}"/>
-          <Text id="idCellOrderDate" text="{ path: 'OrderDate', formatter: 'formatter.formatDate' }"/>
-          <Text id="idCellReceivingPlant" text="{ReceivingPlant}"/>
-          <Text id="idCellDeliveringPlant" text="{DeliveringPlant}"/>
-          <ObjectStatus id="idCellStatus" text="{Status}"
-                  state="{path: 'Status', formatter: 'formatter.getStatusState'}"/>                    
-         </cells>
-        </ColumnListItem>
+              </fb:control>
+            </fb:FilterGroupItem>
+            <fb:FilterGroupItem id="idFGI3" name="Status" label="{i18n>Status}" groupName="Group1" visibleInFilterBar="true">
+              <fb:control>
+                <MultiComboBox id="idMCBStatus" name="Status">
+                  <core:Item id="idMCBStatusItem0" key="Created" text="Created"/>
+                  <core:Item id="idMCBStatusItem1" key="Released" text="Released"/>
+                  <core:Item id="idMCBStatusItem2" key="Partially Completed" text="Partially Completed"/>
+                  <core:Item id="idMCBStatusItem3" key="Delivered" text="Delivered"/>
+                </MultiComboBox>
+              </fb:control>
+            </fb:FilterGroupItem>
+          </fb:filterGroupItems>
+        </fb:FilterBar>
+      </f:DynamicPageHeader>
+    </f:header>
+    <f:content>
+      <Table id="idTabMainView" items="{path: '/Orders', sorter: {path: 'OrderID'} }" mode="MultiSelect">
+        <headerToolbar>
+          <Toolbar id="idTBMainViewTable">
+            <Title id="idTitleMainViewTable" text="{i18n>Orders}"/>
+            <ToolbarSpacer id="idTBSpacer1"/>
+            <Button id="idBtnAdd" icon="sap-icon://add" tooltip="{i18n>CreateOrder}" press=".onNavToCreate"/>
+            <Button id="idBtnDelete" icon="sap-icon://delete" tooltip="{i18n>DeleteOrder}" press=".onDelete"/>
+          </Toolbar>
+        </headerToolbar>
+        <columns>
+          <Column id="idCol1" minScreenWidth="Tablet" demandPopin="true">
+            <Text id="idColTxtOrderNumber" text="{i18n>OrderNumber}"/>
+          </Column>
+          <Column id="idCol2" minScreenWidth="Tablet" demandPopin="true">
+            <Text id="idColTxtCreatedOn" text="{i18n>CreatedOn}"/>
+          </Column>
+          <Column id="idCol3" minScreenWidth="Tablet" demandPopin="true">
+            <Text id="idColTxtReceivingPlant" text="{i18n>ReceivingPlant}"/>
+          </Column>
+          <Column id="idCol4" minScreenWidth="Tablet" demandPopin="true">
+            <Text id="idColTxtDeliveringPlant" text="{i18n>DeliveringPlant}"/>
+          </Column>
+          <Column id="idCol5" minScreenWidth="Tablet" demandPopin="true">
+            <Text id="idColTxtStatus" text="{i18n>Status}"/>
+          </Column>
+        </columns>
+        <items>
+          <ColumnListItem id="idColumnListItem1" type="Navigation" press=".onNavtoDetail">
+            <cells>
+              <Text id="idCellOrderID" text="{OrderID}"/>
+              <Text id="idCellOrderDate" text="{ path: 'OrderDate', formatter: 'formatter.formatDate' }"/>
+              <Text id="idCellReceivingPlant" text="{ReceivingPlant}"/>
+              <Text id="idCellDeliveringPlant" text="{DeliveringPlant}"/>
+              <ObjectStatus id="idCellStatus" text="{Status}" state="{path: 'Status', formatter: 'formatter.getStatusState'}"/>
+            </cells>
+          </ColumnListItem>
         </items>
       </Table>
-      </f:content>
-    </f:DynamicPage>
+    </f:content>
+  </f:DynamicPage>
 </mvc:View>
