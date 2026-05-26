@@ -5,12 +5,20 @@
   xmlns:f="sap.ui.layout.form"
   xmlns:core="sap.ui.core">
 
-  <Page
+<Page
     id="idCreatePage"
-    title="{i18n>createTitle}"
-    showNavButton="true"
-    floatingFooter="true"
-    navButtonPress=".onNavBack">
+    floatingFooter="true">
+
+    <customHeader>
+        <Toolbar id="idToolbar">
+            <content>
+                <Title id="idTxtCreateTitle" 
+                    text="{i18n>createTitle}"
+                    level="H1"
+                    class="sapUiSmallMarginBegin"/>
+            </content>
+        </Toolbar>
+    </customHeader>
 
     <content>
 
@@ -31,8 +39,7 @@
               value="{= ${vm>/Order/ReceivingPlantCode} ? ${vm>/Order/ReceivingPlantCode} + ' - ' + ${vm>/Order/ReceivingPlantName} : '' }"
               showValueHelp="true"
               valueHelpRequest=".onValueHelpReceivingPlant"
-              placeholder="{i18n>selectPlant}"
-              width="25rem"
+              width="15rem"
               editable="true"/>
 
             <Label id="idLblDeliveringPlant" text="{i18n>deliveringPlant}" required="true"/>
@@ -41,8 +48,7 @@
               value="{= ${vm>/Order/DeliveringPlantCode} ? ${vm>/Order/DeliveringPlantCode} + ' - ' + ${vm>/Order/DeliveringPlantName} : '' }"
               showValueHelp="true"
               valueHelpRequest=".onValueHelpDeliveringPlant"
-              placeholder="{i18n>selectPlant}"
-              width="25rem"
+              width="15rem"
               editable="true"/>
 
           </f:SimpleForm>

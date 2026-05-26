@@ -17,14 +17,13 @@ sap.ui.define([
   StandardListItem,
   Filter,
   FilterOperator,
-  History
 ) {
   "use strict";
 
   return Controller.extend("sapips.training.g2casestudy.controller.CreateView", {
 
     onInit: function () {
-      var oVm = new JSONModel({
+      const oVm = new JSONModel({
         Order: {
           OrderNumber: "",
           CreatedOn: new Date(),
@@ -47,27 +46,14 @@ sap.ui.define([
       this._loadProducts();
     },
 
-    // navigation back to main page
-    onNavBack: function () {
-      var oHistory = History.getInstance();
-      var sPreviousHash = oHistory.getPreviousHash();
-      var oRouter = this.getOwnerComponent().getRouter();
-
-      if (sPreviousHash !== undefined) {
-        window.history.go(-1);
-      } else {
-        oRouter.navTo("RouteMainView", {}, true);
-      }
-    },
-
     // load value
     _loadProducts: function () {
-      var oOData = this.getOwnerComponent().getModel();
-      var oVm = this.getView().getModel("vm");
+      const oOData = this.getOwnerComponent().getModel();
+      const oVm = this.getView().getModel("vm");
 
       oOData.read("/Products", {
         success: function (oData) {
-          var a = (oData && oData.results) ? oData.results : [];
+          const a = (oData && oData.results) ? oData.results : [];
           oVm.setProperty("/AvailableProducts", a);
         },
         error: function () {
@@ -77,8 +63,8 @@ sap.ui.define([
     },
 
     _loadPlants: function () {
-      var oOData = this.getOwnerComponent().getModel();
-      var oVm = this.getView().getModel("vm");
+      const oOData = this.getOwnerComponent().getModel();
+      const oVm = this.getView().getModel("vm");
 
       oOData.read("/Plants", {
         success: function (oData) {
@@ -106,15 +92,15 @@ sap.ui.define([
     _openPlantDialog: function (sTargetField) {
       this._sPlantTargetField = sTargetField;
 
-      var oBundle = this.getView().getModel("i18n").getResourceBundle();
+      const oBundle = this.getView().getModel("i18n").getResourceBundle();
 
       if (!this._oPlantDialog) {
         this._oPlantDialog = new SelectDialog({
           title: oBundle.getText("vhPlantTitle"),
 
           search: function (oEvent) {
-            var sValue = oEvent.getParameter("value") || "";
-            var oBinding = oEvent.getSource().getBinding("items");
+            const sValue = oEvent.getParameter("value") || "";
+            const oBinding = oEvent.getSource().getBinding("items");
 
             oBinding.filter(
               sValue ? [new Filter("PlantName", FilterOperator.Contains, sValue)] : []
@@ -122,16 +108,16 @@ sap.ui.define([
           },
 
           confirm: function (oEvent) {
-            var oItem = oEvent.getParameter("selectedItem");
+            const oItem = oEvent.getParameter("selectedItem");
             if (!oItem) { return; }
 
-            var oVm = this.getView().getModel("vm");
-            var oPlant = oItem.getBindingContext("vm").getObject();
+            const oVm = this.getView().getModel("vm");
+            const oPlant = oItem.getBindingContext("vm").getObject();
 
             console.log("Selected Plant Object:", oPlant);
 
-            var sCode = oPlant.PlantCode || "";
-            var sName = oPlant.PlantName || "";
+            const sCode = oPlant.PlantCode || "";
+            const sName = oPlant.PlantName || "";
 
             if (this._sPlantTargetField === "ReceivingPlant") {
               oVm.setProperty("/Order/ReceivingPlantCode", sCode);
@@ -164,12 +150,12 @@ sap.ui.define([
 
     // product filter based on delivering plant
     _applyProductFilterByDeliveringPlant: function (sDeliveringPlantCode) {
-      var oVm = this.getView().getModel("vm");
-      var aAll = oVm.getProperty("/AvailableProducts") || [];
+      const oVm = this.getView().getModel("vm");
+      const aAll = oVm.getProperty("/AvailableProducts") || [];
 
-      var sCode = (sDeliveringPlantCode || "").toString().trim();
+      const sCode = (sDeliveringPlantCode || "").toString().trim();
 
-      var aFiltered = aAll.filter(function (p) {
+      const aFiltered = aAll.filter(function (p) {
         return (p.DeliveringPlantCode || "").toString() === sCode;
       });
 
@@ -179,10 +165,10 @@ sap.ui.define([
 
     // add prouct dialog
     onAddProduct: function () {
-      var oVm = this.getView().getModel("vm");
-      var oBundle = this.getView().getModel("i18n").getResourceBundle();
+      const oVm = this.getView().getModel("vm");
+      const oBundle = this.getView().getModel("i18n").getResourceBundle();
 
-      var sDeliveringCode = (oVm.getProperty("/Order/DeliveringPlantCode") || "").trim();
+      const sDeliveringCode = (oVm.getProperty("/Order/DeliveringPlantCode") || "").trim();
       if (!sDeliveringCode) {
         MessageBox.error(oBundle.getText("msgDeliveringRequired"));
         return;
@@ -194,17 +180,17 @@ sap.ui.define([
     },
 
     _openProductDialog: function () {
-      var oVm = this.getView().getModel("vm");
-      var oBundle = this.getView().getModel("i18n").getResourceBundle();
-      var that = this;
+      const oVm = this.getView().getModel("vm");
+      const oBundle = this.getView().getModel("i18n").getResourceBundle();
+      const that = this;
 
       if (!this._oProductDialog) {
         this._oProductDialog = new SelectDialog({
           title: oBundle.getText("vhProductTitle"),
 
           search: function (oEvent) {
-            var sValue = oEvent.getParameter("value") || "";
-            var oBinding = oEvent.getSource().getBinding("items");
+            const sValue = oEvent.getParameter("value") || "";
+            const oBinding = oEvent.getSource().getBinding("items");
 
             oBinding.filter(
               sValue ? [new Filter("ProductName", FilterOperator.Contains, sValue)] : []
@@ -212,18 +198,18 @@ sap.ui.define([
           },
 
           confirm: function (oEvent) {
-            var oItem = oEvent.getParameter("selectedItem");
+            const oItem = oEvent.getParameter("selectedItem");
             if (!oItem) { return; }
 
-            var oProd = oItem.getBindingContext("vm").getObject();
+            const oProd = oItem.getBindingContext("vm").getObject();
 
-            var sId = oProd.ProductID || oProd.ID || oProd.ProductId || oProd.ProductName;
-            var sName = oProd.ProductName || oProd.Name || "";
-            var fPrice = Number(oProd.UnitPrice || oProd.Price || 0);
+            const sId = oProd.ProductID || oProd.ID || oProd.ProductId || oProd.ProductName;
+            const sName = oProd.ProductName || oProd.Name || "";
+            const fPrice = Number(oProd.UnitPrice || oProd.Price || 0);
 
-            var aSelected = oVm.getProperty("/SelectedProducts") || [];
+            const aSelected = oVm.getProperty("/SelectedProducts") || [];
 
-            var bExists = aSelected.some(function (x) { return x.ProductID === sId; });
+            const bExists = aSelected.some(function (x) { return x.ProductID === sId; });
             if (bExists) {
               MessageToast.show(oBundle.getText("msgProductAlreadyAdded"));
               return;
@@ -258,11 +244,11 @@ sap.ui.define([
 
     // quantity change and total calculation
     onQtyChange: function (oEvent) {
-      var oInput = oEvent.getSource();
-      var oBundle = this.getView().getModel("i18n").getResourceBundle();
+      const oInput = oEvent.getSource();
+      const oBundle = this.getView().getModel("i18n").getResourceBundle();
 
-      var sPath = oInput.getBindingContext("vm").getPath(); // /SelectedProducts/0
-      var iQty = Number(oEvent.getParameter("value"));
+      const sPath = oInput.getBindingContext("vm").getPath(); // /SelectedProducts/0
+      const iQty = Number(oEvent.getParameter("value"));
 
       if (!iQty || iQty <= 0) {
         oInput.setValueState("Error");
@@ -272,8 +258,8 @@ sap.ui.define([
 
       oInput.setValueState("None");
 
-      var oVm = this.getView().getModel("vm");
-      var fPrice = Number(oVm.getProperty(sPath + "/Price") || 0);
+      const oVm = this.getView().getModel("vm");
+      const fPrice = Number(oVm.getProperty(sPath + "/Price") || 0);
 
       oVm.setProperty(sPath + "/Quantity", iQty);
       oVm.setProperty(sPath + "/Total", fPrice * iQty);
@@ -281,10 +267,10 @@ sap.ui.define([
 
     // delete a product from selected products
     onDeleteProduct: function () {
-      var oTable = this.byId("idTblProduct");
-      var aSelectedItems = oTable.getSelectedItems();
-      var oBundle = this.getView().getModel("i18n").getResourceBundle();
-      var that = this;
+      const oTable = this.byId("idTblProduct");
+      const aSelectedItems = oTable.getSelectedItems();
+      const oBundle = this.getView().getModel("i18n").getResourceBundle();
+      const that = this;
 
       if (!aSelectedItems || aSelectedItems.length === 0) {
         MessageBox.error(oBundle.getText("msgSelectItem"));
@@ -298,10 +284,10 @@ sap.ui.define([
           onClose: function (oAction) {
             if (oAction !== MessageBox.Action.YES) { return; }
 
-            var oVm = that.getView().getModel("vm");
-            var aProducts = oVm.getProperty("/SelectedProducts") || [];
+            const oVm = that.getView().getModel("vm");
+            const aProducts = oVm.getProperty("/SelectedProducts") || [];
 
-            var aIdx = aSelectedItems.map(function (oItem) {
+            const aIdx = aSelectedItems.map(function (oItem) {
               return parseInt(oItem.getBindingContext("vm").getPath().split("/")[2], 10);
             }).sort(function (a, b) { return b - a; });
 
@@ -319,8 +305,8 @@ sap.ui.define([
 
     // cancel and reset form
     onCancel: function () {
-      var oBundle = this.getView().getModel("i18n").getResourceBundle();
-      var that = this;
+      const oBundle = this.getView().getModel("i18n").getResourceBundle();
+      const that = this;
 
       MessageBox.confirm(oBundle.getText("msgConfirmCancel"), {
         actions: [MessageBox.Action.YES, MessageBox.Action.NO],
@@ -335,12 +321,12 @@ sap.ui.define([
 
     // saving the order and order details
     onSave: function () {
-      var oVm = this.getView().getModel("vm");
-      var oBundle = this.getView().getModel("i18n").getResourceBundle();
+      const oVm = this.getView().getModel("vm");
+      const oBundle = this.getView().getModel("i18n").getResourceBundle();
 
-      var oOrder = oVm.getProperty("/Order") || {};
-      var aSelected = oVm.getProperty("/SelectedProducts") || [];
-      var that = this;
+      const oOrder = oVm.getProperty("/Order") || {};
+      const aSelected = oVm.getProperty("/SelectedProducts") || [];
+      const that = this;
 
       if (!oOrder.ReceivingPlantCode) {
         MessageBox.error(oBundle.getText("msgReceivingRequired"));
@@ -367,7 +353,7 @@ sap.ui.define([
 
               console.log("Created Order Response:", oCreatedOrder);
 
-              var iOrderId = oCreatedOrder.OrderID;
+              const iOrderId = oCreatedOrder.OrderID;
 
               return that._createOrderDetails(iOrderId).then(function () {
                 return iOrderId;
@@ -376,15 +362,15 @@ sap.ui.define([
 
             .then(function (iOrderId) {
 
-              var sFormattedOrderNo = that._formatOrderNumber(iOrderId);
+              const sFormattedOrderNo = that._formatOrderNumber(iOrderId);
 
-              var oComponent = that.getOwnerComponent();
-              var oModel = oComponent.getModel();
+              const oComponent = that.getOwnerComponent();
+              const oModel = oComponent.getModel();
 
-              var oOrder = oVm.getProperty("/Order");
-              var aSelected = oVm.getProperty("/SelectedProducts");
+              const oOrder = oVm.getProperty("/Order");
+              const aSelected = oVm.getProperty("/SelectedProducts");
 
-              var oFinalOrderPayload = {
+              const oFinalOrderPayload = {
                 OrderID: sFormattedOrderNo,
                 CustomerID: "Cust1",
                 OrderDate: oOrder.CreatedOn || new Date(),
@@ -393,7 +379,7 @@ sap.ui.define([
                 DeliveringPlant: oOrder.DeliveringPlantCode + " - " + oOrder.DeliveringPlantName
               };
 
-              var aFinalOrderDetails = aSelected.map(function (p) {
+              const aFinalOrderDetails = aSelected.map(function (p) {
                 return {
                   OrderID: sFormattedOrderNo,
                   ProductID: p.ProductID,
@@ -402,11 +388,11 @@ sap.ui.define([
                 };
               });
 
-              var aOrders = oModel.getProperty("/Orders") || [];
+              const aOrders = oModel.getProperty("/Orders") || [];
               aOrders.push(oFinalOrderPayload);
               oModel.setProperty("/Orders", aOrders);
 
-              var aOrderDetails = oModel.getProperty("/Order_Details") || [];
+              const aOrderDetails = oModel.getProperty("/Order_Details") || [];
               aFinalOrderDetails.forEach(function (item) {
                 aOrderDetails.push(item);
               });
@@ -439,7 +425,7 @@ sap.ui.define([
     },
 
     _resetCreateForm: function () {
-      var oVm = this.getView().getModel("vm");
+      const oVm = this.getView().getModel("vm");
 
       oVm.setProperty("/Order", {
         OrderNumber: "",
@@ -455,23 +441,23 @@ sap.ui.define([
       oVm.setProperty("/SelectedCount", 0);
       oVm.setProperty("/FilteredProducts", []);
 
-      var oTable = this.byId("idTblProduct");
+      const oTable = this.byId("idTblProduct");
       if (oTable) {
         oTable.removeSelections(true);
       }
     },
 
     _createOrder: function () {
-      var oVm = this.getView().getModel("vm");
-      var oOrder = oVm.getProperty("/Order") || {};
-      var oModel = this.getOwnerComponent().getModel();
+      const oVm = this.getView().getModel("vm");
+      const oOrder = oVm.getProperty("/Order") || {};
+      const oModel = this.getOwnerComponent().getModel();
 
-      var sReceiving = (oOrder.ReceivingPlantCode || "") + " - " + (oOrder.ReceivingPlantName || "");
-      var sDelivering = (oOrder.DeliveringPlantCode || "") + " - " + (oOrder.DeliveringPlantName || "");
+      const sReceiving = (oOrder.ReceivingPlantCode || "") + " - " + (oOrder.ReceivingPlantName || "");
+      const sDelivering = (oOrder.DeliveringPlantCode || "") + " - " + (oOrder.DeliveringPlantName || "");
 
-      var dOrderDate = oOrder.CreatedOn || new Date();
+      const dOrderDate = oOrder.CreatedOn || new Date();
 
-      var oPayload = {
+      const oPayload = {
         CustomerID: oOrder.CustomerID || "Cust1", 
         OrderDate: dOrderDate,
         Status: "Created",
@@ -488,12 +474,12 @@ sap.ui.define([
     },
 
     _createOrderDetails: function (iOrderId) {
-      var oVm = this.getView().getModel("vm");
-      var oModel = this.getOwnerComponent().getModel();
-      var aItems = oVm.getProperty("/SelectedProducts") || [];
+      const oVm = this.getView().getModel("vm");
+      const oModel = this.getOwnerComponent().getModel();
+      const aItems = oVm.getProperty("/SelectedProducts") || [];
 
-      var aPromises = aItems.map(function (p) {
-        var oDetailPayload = {
+      const aPromises = aItems.map(function (p) {
+        const oDetailPayload = {
           OrderID: iOrderId,
           ProductID: Number(p.ProductID),
           UnitPrice: Number(p.Price),     // from your SelectedProducts
@@ -512,12 +498,12 @@ sap.ui.define([
     },
 
     _formatOrderNumber: function (vOrderId) {
-      var s = String(vOrderId || "");
+      const s = String(vOrderId || "");
       return s.padStart(6, "0");
     },
 
     formatProductTitle: function (iCount) {
-      var oBundle;
+      let oBundle;
 
       try {
         if (this && this.getView && this.getView().getModel("i18n")) {
@@ -531,7 +517,7 @@ sap.ui.define([
         oBundle = null;
       }
 
-      var iSafeCount = iCount || 0; // safety fallback
+      const iSafeCount = iCount || 0; // safety fallback
       if (oBundle && oBundle.getText) {
         return oBundle.getText("productSectionTitleWithCount", [iSafeCount]);
       }
@@ -540,8 +526,8 @@ sap.ui.define([
     },
     
     _updateSelectedCount: function () {
-      var oVm = this.getView().getModel("vm");
-      var aSelected = oVm.getProperty("/SelectedProducts") || [];
+      const oVm = this.getView().getModel("vm");
+      const aSelected = oVm.getProperty("/SelectedProducts") || [];
       oVm.setProperty("/SelectedCount", aSelected.length);
     },
 
