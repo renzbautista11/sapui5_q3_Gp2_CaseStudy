@@ -1,0 +1,117 @@
+<!-- Edit Page
+    Description: In this page, user should be able to edit an existing Product Order with the 
+    associated list of products and amount.
+ -->
+
+<mvc:View controllerName="sapips.training.g2casestudy.controller.EditPage"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+    
+    <Page id="pageEP" title="{i18n>editPageTitle}" showNavButton="true" navButtonPress="onNavBack" floatingFooter="true">
+        <content>
+
+            <!-- ORDER DETAILS in Edit Page -->
+            <Panel id="panelOrderDetailEP" headerText="{i18n>orderDetail}" class="sapUiResponsiveMargin" width="auto">
+
+                <f:SimpleForm id="formOrderDetailEP" width="100%">
+
+                    <Label id="lblOrderNumberEP" text="{i18n>OrderNumber}"/>
+                    <Input id="inputOrderNumberEP" value="{edit>/Order/OrderID}" editable="false"/>
+
+                    <Label id="lblCreatedOnEP" text="{i18n>CreatedOn}"/>
+                    <Input id="inputCreatedOnEP" value="{edit>/Order/OrderDate}" editable="false"/>
+
+                    <Label id="lblReceivingPlantEP" text="{i18n>ReceivingPlant}"/>
+                    <Input id="inputReceivingPlantEP" value="{edit>/Order/ReceivingPlant}" editable="false"/>
+
+                    <Label id="lblDeliveringPlantEP" text="{i18n>DeliveringPlant}"/>
+                    <Input id="inputDeliveringPlantEP" value="{edit>/Order/DeliveringPlant}" editable="false"/>
+
+                    <Label id="lblStatusEP" text="{i18n>Status}"/>
+                    <Select id="selectStatusEP" selectedKey="{edit>/Order/Status}">
+                        <items>
+                            <core:Item id="itemCreatedEP" key="Created" text="{i18n>statusCreated}"/>
+                            <core:Item id="itemReleasedEP" key="Released" text="{i18n>statusReleased}"/>
+                            <core:Item id="itemPartiallyCompletedEP" key="PartiallyCompleted" text="{i18n>statusPartiallyCompleted}"/>
+                            <core:Item id="itemDeliveredEP" key="Delivered" text="{i18n>statusDelivered}"/>
+                        </items>
+                    </Select>
+
+                </f:SimpleForm>
+
+            </Panel>
+
+            <!-- PRODUCT TABLE in Edit Page-->
+            <Panel id="panelProductsEP" headerText="{= ${i18n>productsHeaderPrefix} + '(' + ${edit>/Items}.length + ')' }" 
+                    class="sapUiResponsiveMargin" width="auto">
+
+                <headerToolbar>
+                    <OverflowToolbar id="oftPanelProductsEP">
+                        <ToolbarSpacer id="tbsProductsEP"/>
+                        <Button id="btnAddProductEP" icon="sap-icon://add" type="Transparent" press="onAddProduct"/>
+                        <Button id="btnDeleteProductEP" icon="sap-icon://delete" type="Transparent" press="onDeleteProduct"/>
+                    </OverflowToolbar>
+                </headerToolbar>
+
+                <Table
+                    id="tableProductsEP"
+                    items="{edit>/Items}"
+                    mode="MultiSelect">
+
+                    <columns>
+                        <Column id="colProductNameEP">
+                            <Text id="colTxtProductNameEP" text="{i18n>productNameColumn}"/>
+                        </Column>
+                        <Column id="colQuantityEP">
+                            <Text id="colTxtQuantityEP" text="{i18n>quantityColumn}"/>
+                        </Column>
+                        <Column id="colUnitPriceEP">
+                            <Text id="colTxtUnitPriceEP" text="{i18n>unitPriceColumn}"/>
+                        </Column>
+                        <Column id="colTotalPriceEP">
+                            <Text id="colTxtTotalPriceEP" text="{i18n>totalPriceColumn}"/>
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem id="cliProductsEP" type="Active">
+                            <cells>
+
+                                <Text id="txtProductNameEP" text="{edit>ProductName}"/>
+                                <Text id="txtQuantityEP" text="{edit>Quantity}" />
+                                <Text id="txtUnitPriceEP" text="{edit>UnitPrice}" />
+                                <Text id="txtTotalPriceEP" text="{edit>TotalPrice}"/>
+
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+
+                </Table>
+            </Panel>
+        </content>
+
+        <!-- FOOTER in Edit Page-->
+        <footer>
+            <OverflowToolbar id="oftFooterEP" width="100%">
+
+                <ToolbarSpacer id="tbsFooterEP"/>
+
+                <Button
+                    id="btnSaveEP"
+                    text="{i18n>saveButton}"
+                    type="Emphasized"
+                    press="onSave"/>
+
+                <Button
+                    id="btnCancelEP"
+                    text="{i18n>cancelButton}"
+                    type="Reject"
+                    press="onCancel"/>
+
+            </OverflowToolbar>
+        </footer>
+
+    </Page>
+</mvc:View>

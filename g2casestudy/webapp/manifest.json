@@ -91,12 +91,17 @@
       "routes": [
         {
           "name": "RouteMainView",
-          "pattern": ":?query:",
+          "pattern": "",
           "target": [
             "TargetMainView"
           ]
         },
         {
+          "name": "RouteEditPage",
+          "pattern": "edit/{orderId}",
+          "target": [
+            "TargetEditPage"
+          ]
           "name": "RouteDetailView",
           "pattern": "DetailView/{OrderID}",
           "target": ["TargetDetailView"]
@@ -110,6 +115,9 @@
           "id": "MainView",
           "name": "MainView"
         },
+        "TargetEditPage": {
+          "id": "EditPage",
+          "name": "EditPage"
         "TargetDetailView": {
           "id": "DetailView",
           "name": "DetailView"
