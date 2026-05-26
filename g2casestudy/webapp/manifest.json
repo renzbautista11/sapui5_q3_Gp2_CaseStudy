@@ -91,9 +91,16 @@
       "routes": [
         {
           "name": "RouteMainView",
-          "pattern": ":?query:",
+          "pattern": "",
           "target": [
             "TargetMainView"
+          ]
+        },
+        {
+          "name": "RouteEditPage",
+          "pattern": "edit/{orderId}",
+          "target": [
+            "TargetEditPage"
           ]
         }
       ],
@@ -101,6 +108,10 @@
         "TargetMainView": {
           "id": "MainView",
           "name": "MainView"
+        },
+        "TargetEditPage": {
+          "id": "EditPage",
+          "name": "EditPage"
         }
       }
     },
