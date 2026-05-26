@@ -28,6 +28,56 @@ sap.ui.define([
       var oProductsModel = new JSONModel();
       oProductsModel.loadData("localService/mainService/data/Products.json");
       this.getView().setModel(oProductsModel, "products");
+
+      var oRouter = this.getOwnerComponent().getRouter();
+      oRouter.getRoute("RouteEditPage").attachPatternMatched(this._onObjectMatched, this);
+    },
+
+    // Load Order Details
+    _onObjectMatched: function (oEvent) {
+      var sOrderId = oEvent.getParameter("arguments").orderId;
+
+      var oOrdersModel = new JSONModel();
+      oOrdersModel.loadData("localService/mainService/data/Orders.json"); 
+
+      var oDetailsModel = new JSONModel();
+      oDetailsModel.loadData("localService/mainService/data/Order_Details.json");
+
+      var that = this;
+
+      Promise.all([
+        new Promise(resolve => oOrdersModel.attachRequestCompleted(resolve)),
+        new Promise(resolve => oDetailsModel.attachRequestCompleted(resolve)) 
+      ]).then(function () {
+        var aOrders = oOrdersModel.getData();
+        var aDetails = oDetailsModel.getData();
+        var aProducts = that.getView().getModel("products").getData();
+
+        // Find selected order
+        var oOrder = aOrders.find(o => o.OrderID === sOrderId);
+
+        //Filter related items
+        var aItems = aDetails.filter(d => d.OrderID === sOrderId).map(function (d) {
+          var oProduct = aProducts.find(p => p.ProductID === d.ProductID) || {};
+
+          var iQuantity = Number(d.Quantity) || 0;
+          var fUnitPrice = Number(d.UnitPrice) || 0;
+
+          return {
+            ProductID: d.ProductID,
+            ProductName: oProduct.ProductName || "Unknown",
+            Quantity: iQuantity,
+            UnitPrice: fUnitPrice,
+            TotalPrice: iQuantity * fUnitPrice
+          };
+        });
+
+        // Set data to Edit model
+        that.getView().getModel("edit").setData({
+          Order: oOrder || {},
+          Items: aItems
+        });
+      });
     },
 
     // Show confirmation when Saving
