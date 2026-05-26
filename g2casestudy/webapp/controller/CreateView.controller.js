@@ -361,76 +361,79 @@ console.log("Sample product[0].DeliveringPlantCode:", aAll[0] && aAll[0].Deliver
     // -----------------------------
     // Save (criteria #6–#8)
     // -----------------------------
+
     onSave: function () {
       var oVm = this.getView().getModel("vm");
       var oBundle = this.getView().getModel("i18n").getResourceBundle();
 
       var oOrder = oVm.getProperty("/Order") || {};
       var aSelected = oVm.getProperty("/SelectedProducts") || [];
+      var that = this;
 
+      // ✅ VALIDATION
       if (!oOrder.ReceivingPlantCode) {
         MessageBox.error(oBundle.getText("msgReceivingRequired"));
         return;
       }
+
       if (!oOrder.DeliveringPlantCode) {
         MessageBox.error(oBundle.getText("msgDeliveringRequired"));
         return;
       }
+
       if (!aSelected.length) {
         MessageBox.error(oBundle.getText("msgAtLeastOneProduct"));
         return;
       }
 
-      var that = this;
-
+      // ✅ CONFIRM SAVE
       MessageBox.confirm(oBundle.getText("msgConfirmSave"), {
         actions: [MessageBox.Action.YES, MessageBox.Action.NO],
         onClose: function (oAction) {
           if (oAction !== MessageBox.Action.YES) { return; }
 
-          var sOrderNo = oOrder.OrderNumber || that._generateOrderNumber();
+          // ✅ STEP 1: CREATE ORDER
+          that._createOrder()
+            .then(function (oCreatedOrder) {
 
-          // payload includes order number, created date, status (criteria #6–#8) [1](https://myoffice.accenture.com/personal/patricia_m_o_montaos_accenture_com/Documents/Forms/DispForm.aspx?ID=138082&web=1)
-          var oPayload = {
-            OrderNumber: sOrderNo,
-            CreatedOn: oOrder.CreatedOn || new Date(),
-            Status: "Created",
-            ReceivingPlantCode: oOrder.ReceivingPlantCode,
-            ReceivingPlantName: oOrder.ReceivingPlantName,
-            DeliveringPlantCode: oOrder.DeliveringPlantCode,
-            DeliveringPlantName: oOrder.DeliveringPlantName,
-            Items: aSelected.map(function (p) {
-              return {
-                ProductID: p.ProductID,
-                ProductName: p.ProductName,
-                Quantity: p.Quantity,
-                Price: p.Price,
-                Total: p.Total
-              };
+              console.log("Created Order Response:", oCreatedOrder);
+
+              var iOrderId = oCreatedOrder.OrderID;
+
+              // ✅ STEP 2: CREATE ORDER DETAILS
+              return that._createOrderDetails(iOrderId).then(function () {
+                return iOrderId;
+              });
             })
-          };
 
-          var oOData = that.getOwnerComponent().getModel();
+            .then(function (iOrderId) {
 
-          oOData.create("/Orders", oPayload, {
-            success: function () {
-              MessageBox.success(oBundle.getText("msgOrderSavedWithNo", [sOrderNo]), {
-                onClose: function () {
-                  that._resetCreateForm();
-                  that.getOwnerComponent().getRouter().navTo("RouteMainView");
+              // ✅ REFRESH DATA
+              var oModel = that.getOwnerComponent().getModel();
+              if (oModel) {
+                oModel.refresh(true);
+              }
+
+              // ✅ FORMAT ORDER NUMBER
+              var sFormattedOrderNo = that._formatOrderNumber(iOrderId);
+
+              // ✅ SUCCESS MESSAGE
+              MessageBox.success(
+                oBundle.getText("msgOrderSavedWithNo", [sFormattedOrderNo]),
+                {
+                  onClose: function () {
+                    that._resetCreateForm();
+                    that.getOwnerComponent().getRouter().navTo("RouteMainView");
+                  }
                 }
-              });
-            },
-            error: function () {
-              // fallback success for bootcamp even if backend isn't ready
-              MessageBox.success(oBundle.getText("msgOrderSavedWithNo", [sOrderNo]), {
-                onClose: function () {
-                  that._resetCreateForm();
-                  that.getOwnerComponent().getRouter().navTo("RouteMainView");
-                }
-              });
-            }
-          });
+              );
+            })
+
+            .catch(function (err) {
+              console.error("Save failed:", err);
+              MessageBox.error(oBundle.getText("msgSaveFailed"));
+            });
+
         }
       });
     },
@@ -459,6 +462,65 @@ console.log("Sample product[0].DeliveringPlantCode:", aAll[0] && aAll[0].Deliver
       if (oTable) {
         oTable.removeSelections(true);
       }
+    },
+
+    _createOrder: function () {
+      var oVm = this.getView().getModel("vm");
+      var oOrder = oVm.getProperty("/Order") || {};
+      var oModel = this.getOwnerComponent().getModel();
+
+      // Build display strings like main page: "9101 - Singapore"
+      var sReceiving = (oOrder.ReceivingPlantCode || "") + " - " + (oOrder.ReceivingPlantName || "");
+      var sDelivering = (oOrder.DeliveringPlantCode || "") + " - " + (oOrder.DeliveringPlantName || "");
+
+      // OData metadata field is OrderDate (Edm.DateTime), not CreatedOn
+      var dOrderDate = oOrder.CreatedOn || new Date();
+
+      var oPayload = {
+        CustomerID: oOrder.CustomerID || "Cust1",       // optional default if required by your metadata
+        OrderDate: dOrderDate,
+        Status: "Created",
+        ReceivingPlant: sReceiving,
+        DeliveringPlant: sDelivering
+      };
+
+      return new Promise(function (resolve, reject) {
+        oModel.create("/Orders", oPayload, {
+          success: function (oCreated) { resolve(oCreated); },
+          error: function (oErr) { reject(oErr); }
+        });
+      });
+    },
+
+    _createOrderDetails: function (iOrderId) {
+      var oVm = this.getView().getModel("vm");
+      var oModel = this.getOwnerComponent().getModel();
+      var aItems = oVm.getProperty("/SelectedProducts") || [];
+
+      var aPromises = aItems.map(function (p) {
+        // Map your VM fields to Order_Detail fields (UnitPrice + Quantity + ProductID + OrderID)
+        var oDetailPayload = {
+          OrderID: iOrderId,
+          ProductID: Number(p.ProductID),
+          UnitPrice: Number(p.Price),     // from your SelectedProducts
+          Quantity: Number(p.Quantity)
+        };
+
+        return new Promise(function (resolve, reject) {
+          oModel.create("/Order_Details", oDetailPayload, {
+            success: function () { resolve(true); },
+            error: function (oErr) { reject(oErr); }
+          });
+        });
+      });
+
+      return Promise.all(aPromises);
+    },
+
+    _formatOrderNumber: function (vOrderId) {
+      // UI display: 012201 style (pad to 6 digits)
+      var s = String(vOrderId || "");
+      return s.padStart(6, "0");
     },
 
     onExit: function () {
