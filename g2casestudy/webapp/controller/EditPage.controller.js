@@ -72,13 +72,42 @@ sap.ui.define([
           };
         });
 
-        // Set data to Edit model
+        var sFormattedDate = that.formatODataDate(oOrder.OrderDate);
+
         that.getView().getModel("edit").setData({
-          Order: oOrder || {},
+          Order: {
+            OrderID: oOrder.OrderID,
+            CustomerID: oOrder.CustomerID,
+            OrderDate: sFormattedDate,   // ✅ formatted here
+            Status: oOrder.Status,
+            ReceivingPlant: oOrder.ReceivingPlant,
+            DeliveringPlant: oOrder.DeliveringPlant
+          },
           Items: aItems
         });
+
       });
     },
+
+    formatODataDate: function (sODataDate) {
+    if (!sODataDate) {
+      return "";
+    }
+
+    var aMatch = sODataDate.match(/\/Date\((\d+)\)\//);
+    if (!aMatch) {
+      return "";
+    }
+
+    var iTimestamp = parseInt(aMatch[1], 10);
+    var oDate = new Date(iTimestamp);
+
+    return oDate.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+  },
 
     // Show confirmation when Saving
     onSave: function () {
