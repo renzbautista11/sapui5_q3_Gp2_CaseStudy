@@ -17,25 +17,25 @@
 
                 <f:SimpleForm id="formOrderDetailEP" width="100%">
 
-                    <Label id="lblOrderNumberEP" text="Order Number"/>
+                    <Label id="lblOrderNumberEP" text="{i18n>OrderNumber}"/>
                     <Input id="inputOrderNumberEP" value="{edit>/Order/OrderID}" editable="false"/>
 
-                    <Label id="lblCreatedOnEP" text="Created On"/>
+                    <Label id="lblCreatedOnEP" text="{i18n>CreatedOn}"/>
                     <Input id="inputCreatedOnEP" value="{edit>/Order/OrderDate}" editable="false"/>
 
-                    <Label id="lblReceivingPlantEP" text="Receiving Plant"/>
+                    <Label id="lblReceivingPlantEP" text="{i18n>ReceivingPlant}"/>
                     <Input id="inputReceivingPlantEP" value="{edit>/Order/ReceivingPlant}" editable="false"/>
 
-                    <Label id="lblDeliveringPlantEP" text="Delivering Plant"/>
+                    <Label id="lblDeliveringPlantEP" text="{i18n>DeliveringPlant}"/>
                     <Input id="inputDeliveringPlantEP" value="{edit>/Order/DeliveringPlant}" editable="false"/>
 
-                    <Label id="lblStatusEP" text="Status"/>
+                    <Label id="lblStatusEP" text="{i18n>Status}"/>
                     <Select id="selectStatusEP" selectedKey="{edit>/Order/Status}">
                         <items>
-                            <core:Item id="itemCreatedEP" key="Created" text="Created"/>
-                            <core:Item id="itemReleasedEP" key="Released" text="Released"/>
-                            <core:Item id="itemPartiallyCompletedEP" key="PartiallyCompleted" text="Partially Completed"/>
-                            <core:Item id="itemDeliveredEP" key="Delivered" text="Delivered"/>
+                            <core:Item id="itemCreatedEP" key="Created" text="{i18n>statusCreated}"/>
+                            <core:Item id="itemReleasedEP" key="Released" text="{i18n>statusReleased}"/>
+                            <core:Item id="itemPartiallyCompletedEP" key="PartiallyCompleted" text="{i18n>statusPartiallyCompleted}"/>
+                            <core:Item id="itemDeliveredEP" key="Delivered" text="{i18n>statusDelivered}"/>
                         </items>
                     </Select>
 
@@ -62,16 +62,16 @@
 
                     <columns>
                         <Column id="colProductNameEP">
-                            <Text id="colTxtProductNameEP" text="Product Name"/>
+                            <Text id="colTxtProductNameEP" text="{i18n>productNameColumn}"/>
                         </Column>
                         <Column id="colQuantityEP">
-                            <Text id="colTxtQuantityEP" text="Quantity"/>
+                            <Text id="colTxtQuantityEP" text="{i18n>quantityColumn}"/>
                         </Column>
                         <Column id="colUnitPriceEP">
-                            <Text id="colTxtUnitPriceEP" text="Price Per Quantity"/>
+                            <Text id="colTxtUnitPriceEP" text="{i18n>unitPriceColumn}"/>
                         </Column>
                         <Column id="colTotalPriceEP">
-                            <Text id="colTxtTotalPriceEP" text="Total Price"/>
+                            <Text id="colTxtTotalPriceEP" text="{i18n>totalPriceColumn}"/>
                         </Column>
                     </columns>
 
@@ -100,13 +100,13 @@
 
                 <Button
                     id="btnSaveEP"
-                    text="Save"
+                    text="{i18n>saveButton}"
                     type="Emphasized"
                     press="onSave"/>
 
                 <Button
                     id="btnCancelEP"
-                    text="Cancel"
+                    text="{i18n>cancelButton}"
                     type="Reject"
                     press="onCancel"/>
 
