@@ -102,12 +102,20 @@
           "target": [
             "TargetEditPage"
           ]
+        },
+        {
           "name": "RouteDetailView",
           "pattern": "DetailView/{OrderID}",
-          "target": ["TargetDetailView"]
+          "target": [
+            "TargetDetailView"
+          ]
+        },
+        {
           "name": "RouteCreate",
           "pattern": "create",
-          "target": ["TargetCreate"]
+          "target": [
+            "TargetCreate"
+          ]
         }
       ],
       "targets": {
@@ -118,9 +126,11 @@
         "TargetEditPage": {
           "id": "EditPage",
           "name": "EditPage"
+        },
         "TargetDetailView": {
           "id": "DetailView",
           "name": "DetailView"
+        },
         "TargetCreate": {
           "id": "CreateView",
           "name": "CreateView"

@@ -94,14 +94,15 @@ sap.ui.define([
         onEdit: function(){
 
             const oContext = this.getView().getBindingContext();
+            const sOrderID = oContext && oContext.getProperty("OrderID");
 
-            const orderId = oContext.getPath();
-
-            this.getOwnerComponent()
-                .getRouter()
-                .navTo("RouteEditPage", {
-                    orderId: encodeURIComponent(orderId)
-                });
+            if (sOrderID) {
+                this.getOwnerComponent()
+                    .getRouter()
+                    .navTo("RouteEditPage", {
+                        OrderID: encodeURIComponent(sOrderID)
+                    });
+            }
 
 
         }
