@@ -95,12 +95,12 @@ sap.ui.define([
 
             const oContext = this.getView().getBindingContext();
 
-            const sPath = oContext.getPath();
+            const orderId = oContext.getPath();
 
             this.getOwnerComponent()
                 .getRouter()
-                .navTo("Edit", {
-                    path: encodeURIComponent(sPath)
+                .navTo("RouteEditPage", {
+                    orderId: encodeURIComponent(orderId)
                 });
 
 
