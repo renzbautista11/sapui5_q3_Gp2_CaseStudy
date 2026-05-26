@@ -33,61 +33,66 @@ sap.ui.define([
       oRouter.getRoute("RouteEditPage").attachPatternMatched(this._onObjectMatched, this);
     },
 
-    // Load Order Details
     _onObjectMatched: function (oEvent) {
-      var sOrderId = oEvent.getParameter("arguments").orderId;
+  var sOrderId = oEvent.getParameter("arguments").orderId;
 
-      var oOrdersModel = new JSONModel();
-      oOrdersModel.loadData("localService/mainService/data/Orders.json"); 
+  var oOrdersModel = new JSONModel();
+  oOrdersModel.loadData("localService/mainService/data/Orders.json"); 
 
-      var oDetailsModel = new JSONModel();
-      oDetailsModel.loadData("localService/mainService/data/Order_Details.json");
+  var oDetailsModel = new JSONModel();
+  oDetailsModel.loadData("localService/mainService/data/Order_Details.json");
 
-      var that = this;
+  var that = this;
 
-      Promise.all([
-        new Promise(resolve => oOrdersModel.attachRequestCompleted(resolve)),
-        new Promise(resolve => oDetailsModel.attachRequestCompleted(resolve)) 
-      ]).then(function () {
-        var aOrders = oOrdersModel.getData();
-        var aDetails = oDetailsModel.getData();
-        var aProducts = that.getView().getModel("products").getData();
+  Promise.all([
+    new Promise(resolve => oOrdersModel.attachRequestCompleted(resolve)),
+    new Promise(resolve => oDetailsModel.attachRequestCompleted(resolve)) 
+  ]).then(function () {
+    var aOrders = oOrdersModel.getData();
+    var aDetails = oDetailsModel.getData();
+    var aProducts = that.getView().getModel("products").getData();
 
-        // Find selected order
-        var oOrder = aOrders.find(o => o.OrderID === sOrderId);
+    var oOrder = aOrders.find(o => String(o.OrderID) === String(sOrderId));
 
-        //Filter related items
-        var aItems = aDetails.filter(d => d.OrderID === sOrderId).map(function (d) {
-          var oProduct = aProducts.find(p => p.ProductID === d.ProductID) || {};
+    if (!oOrder) {
+      MessageBox.error("Order not found.");
+      return;
+    }
 
-          var iQuantity = Number(d.Quantity) || 0;
-          var fUnitPrice = Number(d.UnitPrice) || 0;
+    var aItems = aDetails
+      .filter(d => String(d.OrderID) === String(sOrderId))
+      .map(function (d) {
 
-          return {
-            ProductID: d.ProductID,
-            ProductName: oProduct.ProductName || "Unknown",
-            Quantity: iQuantity,
-            UnitPrice: fUnitPrice,
-            TotalPrice: iQuantity * fUnitPrice
-          };
-        });
+        var oProduct = aProducts.find(p => p.ProductID === d.ProductID) || {};
 
-        var sFormattedDate = that.formatODataDate(oOrder.OrderDate);
+        var iQuantity = Number(d.Quantity) || 0;
+        var fUnitPrice = Number(d.UnitPrice) || 0;
 
-        that.getView().getModel("edit").setData({
-          Order: {
-            OrderID: oOrder.OrderID,
-            CustomerID: oOrder.CustomerID,
-            OrderDate: sFormattedDate,   // ✅ formatted here
-            Status: oOrder.Status,
-            ReceivingPlant: oOrder.ReceivingPlant,
-            DeliveringPlant: oOrder.DeliveringPlant
-          },
-          Items: aItems
-        });
-
+        return {
+          ProductID: d.ProductID,
+          ProductName: oProduct.ProductName,
+          Quantity: iQuantity,
+          UnitPrice: fUnitPrice,
+          TotalPrice: iQuantity * fUnitPrice
+        };
       });
-    },
+
+    var sFormattedDate = that.formatODataDate(oOrder.OrderDate);
+
+    that.getView().getModel("edit").setData({
+      Order: {
+        OrderID: oOrder.OrderID,
+        CustomerID: oOrder.CustomerID,
+        OrderDate: sFormattedDate,
+        Status: oOrder.Status,
+        ReceivingPlant: oOrder.ReceivingPlant,
+        DeliveringPlant: oOrder.DeliveringPlant
+      },
+      Items: aItems
+    });
+
+  });
+},
 
     // Change format date to DD MMM YYYY
     formatODataDate: function (sODataDate) {
