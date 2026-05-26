@@ -25,7 +25,7 @@ sap.ui.define([
     const oTable = this.byId("tblProducts");
     const oModel = this.getOwnerComponent().getModel();
 
-    this.byId("txtOrderID").setText(sOrderID);
+    //this.byId("txtOrderID").setText(sOrderID);
 
     oModel.read("/Orders", {
         filters: [
