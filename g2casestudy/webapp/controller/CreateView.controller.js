@@ -362,81 +362,117 @@ console.log("Sample product[0].DeliveringPlantCode:", aAll[0] && aAll[0].Deliver
     // Save (criteria #6–#8)
     // -----------------------------
 
-    onSave: function () {
-      var oVm = this.getView().getModel("vm");
-      var oBundle = this.getView().getModel("i18n").getResourceBundle();
+onSave: function () {
+  var oVm = this.getView().getModel("vm");
+  var oBundle = this.getView().getModel("i18n").getResourceBundle();
 
-      var oOrder = oVm.getProperty("/Order") || {};
-      var aSelected = oVm.getProperty("/SelectedProducts") || [];
-      var that = this;
+  var oOrder = oVm.getProperty("/Order") || {};
+  var aSelected = oVm.getProperty("/SelectedProducts") || [];
+  var that = this;
 
-      // ✅ VALIDATION
-      if (!oOrder.ReceivingPlantCode) {
-        MessageBox.error(oBundle.getText("msgReceivingRequired"));
-        return;
-      }
+  // ✅ VALIDATION
+  if (!oOrder.ReceivingPlantCode) {
+    MessageBox.error(oBundle.getText("msgReceivingRequired"));
+    return;
+  }
 
-      if (!oOrder.DeliveringPlantCode) {
-        MessageBox.error(oBundle.getText("msgDeliveringRequired"));
-        return;
-      }
+  if (!oOrder.DeliveringPlantCode) {
+    MessageBox.error(oBundle.getText("msgDeliveringRequired"));
+    return;
+  }
 
-      if (!aSelected.length) {
-        MessageBox.error(oBundle.getText("msgAtLeastOneProduct"));
-        return;
-      }
+  if (!aSelected.length) {
+    MessageBox.error(oBundle.getText("msgAtLeastOneProduct"));
+    return;
+  }
 
-      // ✅ CONFIRM SAVE
-      MessageBox.confirm(oBundle.getText("msgConfirmSave"), {
-        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-        onClose: function (oAction) {
-          if (oAction !== MessageBox.Action.YES) { return; }
+  // ✅ CONFIRM SAVE
+  MessageBox.confirm(oBundle.getText("msgConfirmSave"), {
+    actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+    onClose: function (oAction) {
+      if (oAction !== MessageBox.Action.YES) { return; }
 
-          // ✅ STEP 1: CREATE ORDER
-          that._createOrder()
-            .then(function (oCreatedOrder) {
+      // ✅ STEP 1: CREATE ORDER (mock/backend-style)
+      that._createOrder()
+        .then(function (oCreatedOrder) {
 
-              console.log("Created Order Response:", oCreatedOrder);
+          console.log("Created Order Response:", oCreatedOrder);
 
-              var iOrderId = oCreatedOrder.OrderID;
+          var iOrderId = oCreatedOrder.OrderID;
 
-              // ✅ STEP 2: CREATE ORDER DETAILS
-              return that._createOrderDetails(iOrderId).then(function () {
-                return iOrderId;
-              });
-            })
+          // ✅ STEP 2: CREATE ORDER DETAILS
+          return that._createOrderDetails(iOrderId).then(function () {
+            return iOrderId;
+          });
+        })
 
-            .then(function (iOrderId) {
+        .then(function (iOrderId) {
 
-              // ✅ REFRESH DATA
-              var oModel = that.getOwnerComponent().getModel();
-              if (oModel) {
-                oModel.refresh(true);
+          // ✅ FORMAT ORDER NUMBER (012205)
+          var sFormattedOrderNo = that._formatOrderNumber(iOrderId);
+
+          // ✅ ✅ BUILD FINAL PAYLOAD FOR MAIN PAGE
+          var oComponent = that.getOwnerComponent();
+          var oModel = oComponent.getModel();
+
+          var oOrder = oVm.getProperty("/Order");
+          var aSelected = oVm.getProperty("/SelectedProducts");
+
+          // ✅ ORDER (HEADER)
+          var oFinalOrderPayload = {
+            OrderID: sFormattedOrderNo,
+            CustomerID: "Cust1",
+            OrderDate: oOrder.CreatedOn || new Date(),
+            Status: "Created",
+            ReceivingPlant: oOrder.ReceivingPlantCode + " - " + oOrder.ReceivingPlantName,
+            DeliveringPlant: oOrder.DeliveringPlantCode + " - " + oOrder.DeliveringPlantName
+          };
+
+          // ✅ ORDER DETAILS (ITEMS)
+          var aFinalOrderDetails = aSelected.map(function (p) {
+            return {
+              OrderID: sFormattedOrderNo,
+              ProductID: p.ProductID,
+              UnitPrice: p.Price,
+              Quantity: p.Quantity
+            };
+          });
+
+          // ✅ PUSH TO MAIN PAGE MODEL (Orders)
+          var aOrders = oModel.getProperty("/Orders") || [];
+          aOrders.push(oFinalOrderPayload);
+          oModel.setProperty("/Orders", aOrders);
+
+          // ✅ PUSH TO MAIN PAGE MODEL (Order_Details)
+          var aOrderDetails = oModel.getProperty("/Order_Details") || [];
+          aFinalOrderDetails.forEach(function (item) {
+            aOrderDetails.push(item);
+          });
+          oModel.setProperty("/Order_Details", aOrderDetails);
+
+          // ✅ OPTIONAL REFRESH
+          oModel.refresh(true);
+
+          // ✅ SUCCESS MESSAGE
+          MessageBox.success(
+            oBundle.getText("msgOrderSavedWithNo", [sFormattedOrderNo]),
+            {
+              onClose: function () {
+                that._resetCreateForm();
+                that.getOwnerComponent().getRouter().navTo("RouteMainView");
               }
+            }
+          );
+        })
 
-              // ✅ FORMAT ORDER NUMBER
-              var sFormattedOrderNo = that._formatOrderNumber(iOrderId);
+        .catch(function (err) {
+          console.error("Save failed:", err);
+          MessageBox.error(oBundle.getText("msgSaveFailed"));
+        });
 
-              // ✅ SUCCESS MESSAGE
-              MessageBox.success(
-                oBundle.getText("msgOrderSavedWithNo", [sFormattedOrderNo]),
-                {
-                  onClose: function () {
-                    that._resetCreateForm();
-                    that.getOwnerComponent().getRouter().navTo("RouteMainView");
-                  }
-                }
-              );
-            })
-
-            .catch(function (err) {
-              console.error("Save failed:", err);
-              MessageBox.error(oBundle.getText("msgSaveFailed"));
-            });
-
-        }
-      });
-    },
+    }
+  });
+},
 
     _generateOrderNumber: function () {
       return "ORD-" + Date.now();
