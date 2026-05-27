@@ -80,12 +80,14 @@ sap.ui.define([
         template: oTemplate
       });
       
+      // Update Product panel header with current count
+      var oPanelProduct = this.byId("titleProductsEP");
+ 
       oTable.getBinding("items").attachChange(function () {
       var iCount = oTable.getItems().length;
-
-      oTable.setHeaderText("Product (" + iCount + ")");
+ 
+      oPanelProduct.setText("Product (" + iCount + ")");
       });
-
 
     },
 
@@ -158,7 +160,7 @@ sap.ui.define([
       }
 
       var iCount = aSelectedContexts.length;
-      MessageBox.confirm("Are you sure you want to delete " + iCount + " item(s)?", {
+      MessageBox.confirm("Are you sure you want to delete " + iCount + " items?", {
       title: "Confirm Delete",
       actions: [MessageBox.Action.YES, MessageBox.Action.NO],
       emphasizedAction: MessageBox.Action.NO,
@@ -310,7 +312,7 @@ sap.ui.define([
               return sExistingProductId === oProduct.ProductID;
               });
               if (bExists) {
-                MessageToast.show("The selected product is already exists in this order.");
+                MessageToast.show("The selected product already exists in this order.");
                 return;
               }
               }
