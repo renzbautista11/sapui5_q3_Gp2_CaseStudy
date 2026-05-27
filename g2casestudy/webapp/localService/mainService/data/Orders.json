@@ -1,6 +1,6 @@
 [
     {
-        "OrderID": "012201",
+        "OrderID": 122010,
         "CustomerID": "Cust1",
         "OrderDate": "/Date(1420227094000)/",
         "Status": "Created",
@@ -8,7 +8,7 @@
         "DeliveringPlant": "9102 - Malaysia"
     },
     {
-        "OrderID": "012202",
+        "OrderID": 122020,
         "CustomerID": "Cust1",
         "OrderDate": "/Date(1420227094000)/",
         "Status": "Released",
@@ -16,7 +16,7 @@
         "DeliveringPlant": "9102 - Malaysia"
     },
     {
-        "OrderID": "012203",
+        "OrderID": 122030,
         "CustomerID": "Cust1",
         "OrderDate": "/Date(1420227094000)/",
         "Status": "Partially Completed",
@@ -24,7 +24,7 @@
         "DeliveringPlant": "9102 - Malaysia"
     },
     {
-        "OrderID": "012204",
+        "OrderID": 122040,
         "CustomerID": "Cust1",
         "OrderDate": "/Date(1420227094000)/",
         "Status": "Delivered",
