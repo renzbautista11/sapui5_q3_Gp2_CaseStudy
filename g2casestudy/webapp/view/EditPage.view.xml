@@ -18,19 +18,19 @@
                 <f:SimpleForm id="formOrderDetailEP" width="100%">
 
                     <Label id="lblOrderNumberEP" text="{i18n>OrderNumber}"/>
-                    <Input id="inputOrderNumberEP" value="{edit>/Order/OrderID}" editable="false"/>
+                    <Input id="inputOrderNumberEP" value="{Order/OrderID}" editable="false"/>
 
                     <Label id="lblCreatedOnEP" text="{i18n>CreatedOn}"/>
-                    <Input id="inputCreatedOnEP" value="{edit>/Order/OrderDate}" editable="false"/>
+                    <Input id="inputCreatedOnEP" value="{Order/OrderDate}" editable="false"/>
 
                     <Label id="lblReceivingPlantEP" text="{i18n>ReceivingPlant}"/>
-                    <Input id="inputReceivingPlantEP" value="{edit>/Order/ReceivingPlant}" editable="false"/>
+                    <Input id="inputReceivingPlantEP" value="{Order/ReceivingPlant}" editable="false"/>
 
                     <Label id="lblDeliveringPlantEP" text="{i18n>DeliveringPlant}"/>
-                    <Input id="inputDeliveringPlantEP" value="{edit>/Order/DeliveringPlant}" editable="false"/>
+                    <Input id="inputDeliveringPlantEP" value="{Order/DeliveringPlant}" editable="false"/>
 
                     <Label id="lblStatusEP" text="{i18n>Status}"/>
-                    <Select id="selectStatusEP" selectedKey="{edit>/Order/Status}">
+                    <Select id="selectStatusEP" selectedKey="{Order/Status}">
                         <items>
                             <core:Item id="itemCreatedEP" key="Created" text="{i18n>statusCreated}"/>
                             <core:Item id="itemReleasedEP" key="Released" text="{i18n>statusReleased}"/>

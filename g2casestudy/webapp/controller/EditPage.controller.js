@@ -35,61 +35,29 @@ sap.ui.define([
     _onObjectMatched: function (oEvent) {
   var sOrderId = oEvent.getParameter("arguments").orderId;
 
-  var oOrdersModel = new JSONModel();
-  oOrdersModel.loadData("localService/mainService/data/Orders.json"); 
+  const oTable = this.byId("tableProductsEP");
+  const oModel = this.getOwnerComponent().getModel();
 
-  var oDetailsModel = new JSONModel();
-  oDetailsModel.loadData("localService/mainService/data/Order_Details.json");
+  this.byId("inputOrderNumberEP").setValue(sOrderId);
 
-  var that = this;
+  oModel.read("/Orders", {
+    filters: [
+      new Filter("OrderID", FilterOperator.EQ, sOrderId)
+    ],
+    success: (oData) => {
+      this.byId("inputOrderNumberEP").setValue(oData.results[0].OrderID);
 
-  Promise.all([
-    new Promise(resolve => oOrdersModel.attachRequestCompleted(resolve)),
-    new Promise(resolve => oDetailsModel.attachRequestCompleted(resolve)) 
-  ]).then(function () {
-    var aOrders = oOrdersModel.getData();
-    var aDetails = oDetailsModel.getData();
-    var aProducts = that.getView().getModel("products").getData();
+      var oDate = new Date(oData.results[0].OrderDate);
+      var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "dd MMM yyyy" });
+      this.byId("inputCreatedOnEP").setValue(oDateFormat.format(oDate));
 
-    var oOrder = aOrders.find(o => String(o.OrderID) === String(sOrderId));
-
-    if (!oOrder) {
-      MessageBox.error("Order not found.");
-      return;
+      this.byId("inputReceivingPlantEP").setValue(oData.results[0].ReceivingPlant);
+      this.byId("inputDeliveringPlantEP").setValue(oData.results[0].DeliveringPlant);
+      this.byId("selectStatusEP").selectedKey(oData.results[0].Status);
+    },
+    error: (oError) => {
+      MessageBox.error("Failed to load order data.");
     }
-
-    var aItems = aDetails
-      .filter(d => String(d.OrderID) === String(sOrderId))
-      .map(function (d) {
-
-        var oProduct = aProducts.find(p => p.ProductID === d.ProductID) || {};
-
-        var iQuantity = Number(d.Quantity) || 0;
-        var fUnitPrice = Number(d.UnitPrice) || 0;
-
-        return {
-          ProductID: d.ProductID,
-          ProductName: oProduct.ProductName,
-          Quantity: iQuantity,
-          UnitPrice: fUnitPrice,
-          TotalPrice: iQuantity * fUnitPrice
-        };
-      });
-
-    var sFormattedDate = that.formatODataDate(oOrder.OrderDate);
-
-    that.getView().getModel("edit").setData({
-      Order: {
-        OrderID: oOrder.OrderID,
-        CustomerID: oOrder.CustomerID,
-        OrderDate: sFormattedDate,
-        Status: oOrder.Status,
-        ReceivingPlant: oOrder.ReceivingPlant,
-        DeliveringPlant: oOrder.DeliveringPlant
-      },
-      Items: aItems
-    });
-
   });
 },
 
