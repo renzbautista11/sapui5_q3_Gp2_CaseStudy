@@ -125,6 +125,16 @@ sap.ui.define([
                 // Get Order Id
                 //var orderId = this.getView().getModel().getProperty("/Orders/OrderID");
                 var orderId = this.byId("inputOrderNumberEP").getValue();
+                const oModel = this.getOwnerComponent().getModel();
+                const newStatus = this.byId("selectStatusEP").getSelectedKey(); 
+                // Update Order status
+                oModel.update("/Orders('" + orderId + "')", {
+                  Status: newStatus
+                }, {
+                  success: function () {
+                  }
+                });
+
                 MessageBox.success("The Order " + orderId + " has been updated successfully.", {
                   actions: [MessageBox.Action.OK],
                   onClose: function () {
