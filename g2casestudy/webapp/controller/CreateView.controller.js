@@ -6,8 +6,7 @@ sap.ui.define([
   "sap/m/SelectDialog",
   "sap/m/StandardListItem",
   "sap/ui/model/Filter",
-  "sap/ui/model/FilterOperator",
-  "sap/ui/core/routing/History"
+  "sap/ui/model/FilterOperator"
 ], function (
   Controller,
   JSONModel,
