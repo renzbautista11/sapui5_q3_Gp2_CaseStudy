@@ -9,13 +9,16 @@ sap.ui.define([
   "sap/ui/model/json/JSONModel",
   "sap/m/SelectDialog",
   "sap/m/StandardListItem",
+  "sap/m/MessageToast",
   "sap/ui/model/Filter",
   "sap/ui/model/FilterOperator"
-], function (Controller, MessageBox, JSONModel, SelectDialog, StandardListItem, Filter, FilterOperator) {
+], function (Controller, MessageBox, JSONModel, SelectDialog, StandardListItem,
+  MessageToast, Filter, FilterOperator) {
   "use strict";
 
   return Controller.extend("sapips.training.g2casestudy.controller.EditPage", {
     onInit: function () {
+      /*
       // Create model for Edit Page
       var oEditModel = new JSONModel({
         Order: {}, // header info
@@ -30,6 +33,15 @@ sap.ui.define([
 
       var oRouter = this.getOwnerComponent().getRouter();
       oRouter.getRoute("RouteEditPage").attachPatternMatched(this._onObjectMatched, this);
+      
+      this.getOwnerComponent().getRouter()
+            .getRoute("Edit")
+            .attachPatternMatched(this._onObjectMatched, this);
+
+            */
+      this.getOwnerComponent().getRouter()
+        .getRoute("RouteEditPage")
+        .attachPatternMatched(this._onObjectMatched, this);
     },
 
     _onObjectMatched: function (oEvent) {
@@ -38,7 +50,7 @@ sap.ui.define([
       // Load Order details
       const oModel = this.getOwnerComponent().getModel();
 
-      this.byId("inputOrderNumberEP").setValue(sOrderId);
+      //this.byId("inputOrderNumberEP").setValue(sOrderId);
 
       oModel.read("/Orders", {
         filters: [
@@ -66,6 +78,12 @@ sap.ui.define([
         ],
         parameters: { expand: "Products" },
         template: oTemplate
+      });
+      
+      oTable.getBinding("items").attachChange(function () {
+      var iCount = oTable.getItems().length;
+
+      oTable.setHeaderText("Product (" + iCount + ")");
       });
 
 
@@ -105,7 +123,8 @@ sap.ui.define([
               if (sAction === MessageBox.Action.YES) {
 
                 // Get Order Id
-                var orderId = this.getView().getModel().getProperty("/Order/OrderID");
+                //var orderId = this.getView().getModel().getProperty("/Orders/OrderID");
+                var orderId = this.byId("inputOrderNumberEP").getValue();
                 MessageBox.success("The Order " + orderId + " has been updated successfully.", {
                   actions: [MessageBox.Action.OK],
                   onClose: function () {
@@ -193,75 +212,123 @@ sap.ui.define([
         }
       });
     },
-
     //------------------------------------------------------------------------
     // Add Product to Order - original from branch development/edit_page_jinky
     //------------------------------------------------------------------------
     onAddProduct: function () {
       // Lazy create dialog (for resuability)
-      if (!this._oAddDialog) {
-        this._oAddDialog = new SelectDialog({
-          title: "Select Product",
-          
-          // Search
-          search: function (oEvent) {
-            var sValue = oEvent.getParameter("value") || "";
-            var oBinding = oEvent.getSource().getBinding("items");
-            oBinding.filter(new Filter("ProductName", FilterOperator.Contains, sValue));
-          },
+       var oModel = this.getView().getModel();
 
-          // When product is selected
-          confirm: function (oEvent) {
-            var oSelectedItem = oEvent.getParameter("selectedItem");
-            if (!oSelectedItem) { return; }
+        // Get DeliveringPlantCode of current Order
+        var oDeliveringInput = this.byId("inputDeliveringPlantEP");
+        var sPlantCode = (oDeliveringInput ? oDeliveringInput.getValue() : "").toString().split("-")[0].trim();
 
-            var oProduct = oSelectedItem.getBindingContext("products").getObject();
+        if (!this._oProductDialog) {
+        this._oProductDialog = sap.ui.xmlfragment(
+            this.getView().getId(),
+            "sapips.training.g2casestudy.fragment.EditPage",
+            this
+        );
+        this.getView().addDependent(this._oProductDialog);
+    }
+        // Apply filter
+        var oFilter = new sap.ui.model.Filter(
+            "DeliveringPlantCode",
+            sap.ui.model.FilterOperator.EQ,
+            sPlantCode
+        );
 
-            var oModel = this.getView().getModel("edit");
-            var aItems = oModel.getProperty("/Items") || [];
+    var oBinding = this._oProductDialog.getBinding("items");
+    oBinding.filter([oFilter]);    
 
-            // Check if product is already added
-            var bExists = aItems.some(function (oItem) {
-              return oItem.ProductID === oProduct.ProductID;
-            });
-
-            if (bExists) {
-              MessageToast.show("Product is already added.");
-              return;
-            }
-
-            var iQuantity = 1; 
-            var fUnitPrice = Number(oProduct.UnitPrice) || 0;
-
-            // Add new product to table
-            aItems.push({
-              ProductID: oProduct.ProductID,
-              ProductName: oProduct.ProductName,
-              Quantity: iQuantity,
-              UnitPrice: fUnitPrice,
-              TotalPrice: iQuantity * fUnitPrice
-            });
-
-            oModel.setProperty("/Items", aItems);
-
-            MessageToast.show("Product added to the order.");
-          }.bind(this)
-        });
-
-        this._oAddDialog.setModel(this.getView().getModel("products"), "products");
-        this._oAddDialog.bindAggregation("items", {
-          path: "products>/", 
-          template: new StandardListItem({
-            title: "{products>ProductName}",
-            description: "{products>ProductID}"
-          })
-        });
-      }
-
-      this._oAddDialog.open();
+    this._oProductDialog.open();
     },
+                onQuantityChange: function (oEvent) {
 
-    onNavBack: function () {
+                const oInput = oEvent.getSource();
+
+                const iQty = parseInt(oInput.getValue()) || 0;
+
+                const oContext = oInput.getBindingContext();
+
+                if (!iQty || iQty <= 0) {
+                  oInput.setValueState("Error");
+                  oInput.setValueStateText("Quantity must be a greater than 0.");
+                  return;
+                }
+                oInput.setValueState("None");
+
+                const iPrice = oContext.getProperty("Price");
+
+                const iTotal = iQty * iPrice;
+
+                oContext.getModel().setProperty(
+                    oContext.getPath() + "/Quantity",
+                    iQty
+                );
+
+                oContext.getModel().setProperty(
+                    oContext.getPath() + "/Total",
+                    iTotal
+                );
+
+            },
+            onProductConfirm: function (oEvent) {
+
+              const oSelectedItem = oEvent.getParameter("selectedItem");
+
+              // close dialog if exists
+              if (this._oProductDialog) {
+               // this._oProductDialog.close();
+              }
+
+              if (!oSelectedItem) return;
+
+              const oProduct = oSelectedItem.getBindingContext().getObject();
+              const sOrderId = this.byId("inputOrderNumberEP").getValue();
+              const fUnitPrice = Number(oProduct.UnitPrice ?? oProduct.Price ?? 0);
+
+              // Check if product already exists in the table
+              const oTable = this.byId("tableProductsEP");
+              const oBinding = oTable && oTable.getBinding("items");
+              if (oBinding) {
+              const aContexts = oBinding.getContexts();
+              const bExists = aContexts.some(function (oCtx) {
+                const sExistingProductId = oCtx.getProperty("ProductID");
+                const sExistingOrderId = oCtx.getProperty("OrderID");
+                return sExistingProductId === oProduct.ProductID && sExistingOrderId === sOrderId;
+              });
+              if (bExists) {
+                MessageToast.show("The selected product is already exists in this order.");
+                return;
+              }
+              }
+
+              const oNewProduct = {
+              OrderID: sOrderId,
+              ProductID: oProduct.ProductID,
+              Quantity: 1,
+              UnitPrice: fUnitPrice,
+              Total: fUnitPrice * 1
+              };
+
+              // Use OData create to add a new Order_Details entry
+              const oODataModel = this.getOwnerComponent().getModel();
+              oODataModel.create("/Order_Details", oNewProduct, {
+              success: function () {
+                // refresh the table binding so the new item appears
+                const oTable = this.byId("tableProductsEP");
+                const oBinding = oTable && oTable.getBinding("items");
+                if (oBinding) { oBinding.refresh(); }
+              }.bind(this),
+              error: function () {
+                MessageBox.error("Failed to add the selected product.");
+              }
+              });
+
+            },
+
+          onNavBack: function () {
       // Navigate back to Detail page
       window.history.go(-1);
     }
