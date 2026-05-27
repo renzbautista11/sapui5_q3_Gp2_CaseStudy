@@ -306,7 +306,8 @@ sap.ui.define([
               const bExists = aContexts.some(function (oCtx) {
                 const sExistingProductId = oCtx.getProperty("ProductID");
                 const sExistingOrderId = oCtx.getProperty("OrderID");
-                return sExistingProductId === oProduct.ProductID && sExistingOrderId === sOrderId;
+                //return sExistingProductId === oProduct.ProductID && sExistingOrderId === sOrderId;
+              return sExistingProductId === oProduct.ProductID;
               });
               if (bExists) {
                 MessageToast.show("The selected product is already exists in this order.");
