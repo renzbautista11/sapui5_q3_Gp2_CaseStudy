@@ -57,6 +57,7 @@ sap.ui.define([
         }
       });
 
+      // Load Products
       const oTable = this.byId("tableProductsEP");
       const oTemplate = this.byId("cliProductsEP").clone();
       oTable.bindItems({
@@ -68,55 +69,38 @@ sap.ui.define([
         template: oTemplate
       });
 
+      // Update Product panel header with current count
+      var oPanelProduct = this.byId("titleProductsEP");
 
+      oTable.getBinding("items").attachChange(function () {
+      var iCount = oTable.getItems().length;
+
+      oPanelProduct.setText("Product (" + iCount + ")");
+      });
     },
 
-    // Set Product section title with count of products
-    formatProductTitle: function (iCount) {
-      var oBundle;
+    // Show confirmation when Saving
+    onSave: function () {
+      MessageBox.confirm("Are you sure you want to Save these changes?", {
+        title: "Confirm Save",
+        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+        emphasizedAction: MessageBox.Action.YES,
+        onClose: function (sAction) {
+          if (sAction === MessageBox.Action.YES) {
 
-      try {
-        if (this && this.getView && this.getView().getModel("i18n")) {
-          oBundle = this.getView().getModel("i18n").getResourceBundle();
-        } else if (this && this.getOwnerComponent && this.getOwnerComponent().getModel("i18n")) {
-          oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-        } else if (sap && sap.ui && sap.ui.getCore && sap.ui.getCore().getModel("i18n")) {
-          oBundle = sap.ui.getCore().getModel("i18n").getResourceBundle();
-        }
-      } catch (e) {
-        oBundle = null;
-      }
-
-      var iSafeCount = iCount || 0; // safety fallback
-      if (oBundle && oBundle.getText) {
-        return oBundle.getText("productSectionTitleWithCount", [iSafeCount]);
-      }
-
-      return "Products (" + iSafeCount + ")";
-    },
-
-        // Show confirmation when Saving
-        onSave: function () {
-          MessageBox.confirm("Are you sure you want to Save these changes?", {
-            title: "Confirm Save",
-            actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-            emphasizedAction: MessageBox.Action.YES,
-            onClose: function (sAction) {
-              if (sAction === MessageBox.Action.YES) {
-
-                // Get Order Id
-                var orderId = this.getView().getModel().getProperty("/Order/OrderID");
-                MessageBox.success("The Order " + orderId + " has been updated successfully.", {
-                  actions: [MessageBox.Action.OK],
-                  onClose: function () {
-                    // Navigate back to Detail page
-                    window.history.go(-1);
-                  }
-                });
+            // Get Order Id
+            var orderId = this.getView().getModel().getProperty("/Order/OrderID");
+            MessageBox.success("The Order " + orderId + " has been updated successfully.", {
+              actions: [MessageBox.Action.OK],
+              onClose: function () {
+                // Navigate back to Detail page
+                window.history.go(-1);
               }
-            }.bind(this)
-          });
-        },
+            });
+          }
+        }.bind(this)
+      });
+    },
 
     // Show confirmation when Deleting
     onDeleteProduct: function () {

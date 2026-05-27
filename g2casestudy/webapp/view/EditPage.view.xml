@@ -44,11 +44,11 @@
             </Panel>
 
             <!-- PRODUCT TABLE in Edit Page-->
-            <Panel id="panelProductsEP" headerText="{i18n>productsHeaderPrefix}" 
-                    class="sapUiResponsiveMargin" width="auto">
+            <Panel id="panelProductsEP" class="sapUiResponsiveMargin" width="auto">
 
                 <headerToolbar>
                     <OverflowToolbar id="oftPanelProductsEP">
+                        <Title id="titleProductsEP" level="H5" text=""/> 
                         <ToolbarSpacer id="tbsProductsEP"/>
                         <Button id="btnAddProductEP" icon="sap-icon://add" type="Transparent" press="onAddProduct"/>
                         <Button id="btnDeleteProductEP" icon="sap-icon://delete" type="Transparent" press="onDeleteProduct"/>
