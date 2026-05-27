@@ -50,7 +50,7 @@ sap.ui.define([
       // Load Order details
       const oModel = this.getOwnerComponent().getModel();
 
-      this.byId("inputOrderNumberEP").setValue(sOrderId);
+      //this.byId("inputOrderNumberEP").setValue(sOrderId);
 
       oModel.read("/Orders", {
         filters: [
@@ -79,7 +79,12 @@ sap.ui.define([
         parameters: { expand: "Products" },
         template: oTemplate
       });
+      
+      oTable.getBinding("items").attachChange(function () {
+      var iCount = oTable.getItems().length;
 
+      oTable.setHeaderText("Product (" + iCount + ")");
+      });
 
 
     },
