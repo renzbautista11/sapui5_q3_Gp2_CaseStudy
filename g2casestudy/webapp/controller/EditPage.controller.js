@@ -33,123 +33,150 @@ sap.ui.define([
     },
 
     _onObjectMatched: function (oEvent) {
-  var sOrderId = oEvent.getParameter("arguments").orderId;
+      var sOrderId = oEvent.getParameter("arguments").orderId;
 
-  const oTable = this.byId("tableProductsEP");
-  const oModel = this.getOwnerComponent().getModel();
+      // Load Order details
+      const oModel = this.getOwnerComponent().getModel();
 
-  this.byId("inputOrderNumberEP").setValue(sOrderId);
+      this.byId("inputOrderNumberEP").setValue(sOrderId);
 
-  oModel.read("/Orders", {
-    filters: [
-      new Filter("OrderID", FilterOperator.EQ, sOrderId)
-    ],
-    success: (oData) => {
-      this.byId("inputOrderNumberEP").setValue(oData.results[0].OrderID);
+      oModel.read("/Orders", {
+        filters: [
+          new Filter("OrderID", FilterOperator.EQ, sOrderId)
+        ],
+        success: (oData) => {
+          this.byId("inputOrderNumberEP").setValue(oData.results[0].OrderID);
 
-      var oDate = new Date(oData.results[0].OrderDate);
-      var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "dd MMM yyyy" });
-      this.byId("inputCreatedOnEP").setValue(oDateFormat.format(oDate));
+          var oDate = new Date(oData.results[0].OrderDate);
+          var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "dd MMM yyyy" });
+          this.byId("inputCreatedOnEP").setValue(oDateFormat.format(oDate));
 
-      this.byId("inputReceivingPlantEP").setValue(oData.results[0].ReceivingPlant);
-      this.byId("inputDeliveringPlantEP").setValue(oData.results[0].DeliveringPlant);
-      this.byId("selectStatusEP").selectedKey(oData.results[0].Status);
-    },
-    error: (oError) => {
-      MessageBox.error("Failed to load order data.");
-    }
-  });
-},
-
-    // Change format date to DD MMM YYYY
-    formatODataDate: function (sODataDate) {
-    if (!sODataDate) {
-      return "";
-    }
-
-    var aMatch = sODataDate.match(/\/Date\((\d+)\)\//);
-    if (!aMatch) {
-      return "";
-    }
-
-    var iTimestamp = parseInt(aMatch[1], 10);
-    var oDate = new Date(iTimestamp);
-
-    return oDate.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric"
-    });
-  },
-
-    // Show confirmation when Saving
-    onSave: function () {
-      MessageBox.confirm("Are you sure you want to Save these changes?", {
-        title: "Confirm Save",
-        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-        emphasizedAction: MessageBox.Action.YES,
-        onClose: function (sAction) {
-          if (sAction === MessageBox.Action.YES) {
-
-            // Get Order Id
-            var orderId = this.getView().getModel("edit").getProperty("/Order/OrderID");
-            MessageBox.success("The Order " + orderId + " has been updated successfully.", {
-              actions: [MessageBox.Action.OK],
-              onClose: function () {
-                // Navigate back to Detail page
-                window.history.go(-1);
-              }
-            });
-          }
-        }.bind(this)
+          this.byId("inputReceivingPlantEP").setValue(oData.results[0].ReceivingPlant);
+          this.byId("inputDeliveringPlantEP").setValue(oData.results[0].DeliveringPlant);
+          this.byId("selectStatusEP").setSelectedKey(oData.results[0].Status);
+        }
       });
+
+      const oTable = this.byId("tableProductsEP");
+      const oTemplate = this.byId("cliProductsEP").clone();
+      oTable.bindItems({
+        path: "/Order_Details",
+        filters: [
+          new Filter("OrderID", FilterOperator.EQ, sOrderId)
+        ],
+        parameters: { expand: "Products" },
+        template: oTemplate
+      });
+
+
     },
+
+    // Set Product section title with count of products
+    formatProductTitle: function (iCount) {
+      var oBundle;
+
+      try {
+        if (this && this.getView && this.getView().getModel("i18n")) {
+          oBundle = this.getView().getModel("i18n").getResourceBundle();
+        } else if (this && this.getOwnerComponent && this.getOwnerComponent().getModel("i18n")) {
+          oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
+        } else if (sap && sap.ui && sap.ui.getCore && sap.ui.getCore().getModel("i18n")) {
+          oBundle = sap.ui.getCore().getModel("i18n").getResourceBundle();
+        }
+      } catch (e) {
+        oBundle = null;
+      }
+
+      var iSafeCount = iCount || 0; // safety fallback
+      if (oBundle && oBundle.getText) {
+        return oBundle.getText("productSectionTitleWithCount", [iSafeCount]);
+      }
+
+      return "Products (" + iSafeCount + ")";
+    },
+
+        // Show confirmation when Saving
+        onSave: function () {
+          MessageBox.confirm("Are you sure you want to Save these changes?", {
+            title: "Confirm Save",
+            actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+            emphasizedAction: MessageBox.Action.YES,
+            onClose: function (sAction) {
+              if (sAction === MessageBox.Action.YES) {
+
+                // Get Order Id
+                var orderId = this.getView().getModel().getProperty("/Order/OrderID");
+                MessageBox.success("The Order " + orderId + " has been updated successfully.", {
+                  actions: [MessageBox.Action.OK],
+                  onClose: function () {
+                    // Navigate back to Detail page
+                    window.history.go(-1);
+                  }
+                });
+              }
+            }.bind(this)
+          });
+        },
 
     // Show confirmation when Deleting
     onDeleteProduct: function () {
       var oTable = this.byId("tableProductsEP");
       var aSelectedContexts = oTable.getSelectedContexts(true);
 
-      // Check if no product is selected
       if (!aSelectedContexts || aSelectedContexts.length === 0) {
-        MessageBox.error("Please select an item from the table.");
-        return;
+      MessageBox.error("Please select an item from the table.");
+      return;
       }
-      // If item/s is/are selected
+
       var iCount = aSelectedContexts.length;
-      MessageBox.confirm("Are you sure you want to delete "+ iCount + " item(s)?", {
-        title: "Confirm Delete",
-        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-        emphasizedAction: MessageBox.Action.NO,
-        onClose: function (sAction) {
-          if (sAction === MessageBox.Action.YES) {
+      MessageBox.confirm("Are you sure you want to delete " + iCount + " item(s)?", {
+      title: "Confirm Delete",
+      actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+      emphasizedAction: MessageBox.Action.NO,
+      onClose: function (sAction) {
+        if (sAction !== MessageBox.Action.YES) {
+        return;
+        }
 
-            var oModel = this.getView().getModel("edit");
-            var aItems = oModel.getProperty("/Items") || [];
+        var oODataModel = this.getOwnerComponent().getModel();
+        var iToDelete = aSelectedContexts.length;
+        var iDone = 0;
+        var iFailed = 0;
+        var that = this;
 
-            // Get the ProductIDs of selected items
-            var aSelectedIDs = aSelectedContexts.map(function (oContext) {
-              return oContext.getObject().ProductID;
-            });
+        function _checkFinish() {
+        if (iDone + iFailed === iToDelete) {
+          // Refresh binding to reflect deletions
+          var oBinding = oTable.getBinding("items");
+          if (oBinding) { oBinding.refresh(); }
 
-            // Filter out selected items
-            var aUpdatedItems = aItems.filter(function (oItem) {
-              return aSelectedIDs.indexOf(oItem.ProductID) === -1;
-            });
+          oTable.removeSelections(true);
 
-            // Update the model with the remaining items
-            oModel.setProperty("/Items", aUpdatedItems);
-
-            // Clear selection in the table
-            oTable.removeSelections(true);
-
-            // Show success message
-            MessageBox.success("Selected product(s) deleted.");
-            
+          if (iFailed === 0) {
+          MessageBox.success("Selected product(s) deleted.");
+          } else if (iDone === 0) {
+          MessageBox.error("Failed to delete selected product(s).");
+          } else {
+          MessageBox.warning(iDone + " deleted, " + iFailed + " failed.");
           }
-        }.bind(this) 
-      });
+        }
+        }
 
+        aSelectedContexts.forEach(function (oContext) {
+        var sPath = oContext.getPath();
+        oODataModel.remove(sPath, {
+          success: function () {
+          iDone++;
+          _checkFinish();
+          },
+          error: function () {
+          iFailed++;
+          _checkFinish();
+          }
+        });
+        });
+      }.bind(this)
+      });
     },
 
     // Show confirmation when Canceling
@@ -167,7 +194,9 @@ sap.ui.define([
       });
     },
 
-    // Add Product to Order
+    //------------------------------------------------------------------------
+    // Add Product to Order - original from branch development/edit_page_jinky
+    //------------------------------------------------------------------------
     onAddProduct: function () {
       // Lazy create dialog (for resuability)
       if (!this._oAddDialog) {
@@ -197,7 +226,7 @@ sap.ui.define([
             });
 
             if (bExists) {
-              MessageBox.information("Product is already added.");
+              MessageToast.show("Product is already added.");
               return;
             }
 
@@ -215,7 +244,7 @@ sap.ui.define([
 
             oModel.setProperty("/Items", aItems);
 
-            MessageBox.success("Product added to the order.");
+            MessageToast.show("Product added to the order.");
           }.bind(this)
         });
 

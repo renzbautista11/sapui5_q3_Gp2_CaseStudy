@@ -44,7 +44,7 @@
             </Panel>
 
             <!-- PRODUCT TABLE in Edit Page-->
-            <Panel id="panelProductsEP" headerText="{= ${i18n>productsHeaderPrefix} + '(' + ${edit>/Items}.length + ')' }" 
+            <Panel id="panelProductsEP" headerText="{i18n>productsHeaderPrefix}" 
                     class="sapUiResponsiveMargin" width="auto">
 
                 <headerToolbar>
@@ -57,7 +57,7 @@
 
                 <Table
                     id="tableProductsEP"
-                    items="{edit>/Items}"
+                    items="{path: '/Order_Details', parameters: {expand: 'Products'}}"
                     mode="MultiSelect">
 
                     <columns>
@@ -79,10 +79,10 @@
                         <ColumnListItem id="cliProductsEP" type="Active">
                             <cells>
 
-                                <Text id="txtProductNameEP" text="{edit>ProductName}"/>
-                                <Text id="txtQuantityEP" text="{edit>Quantity}" />
-                                <Text id="txtUnitPriceEP" text="{edit>UnitPrice}" />
-                                <Text id="txtTotalPriceEP" text="{edit>TotalPrice}"/>
+                                <Text id="txtProductNameEP" text="{Products/ProductName}"/>
+                                <Text id="txtQuantityEP" text="{Quantity}" />
+                                <Text id="txtUnitPriceEP" text="{UnitPrice}" />
+                                <Text id="txtTotalPriceEP" text="{= ${Quantity} * ${UnitPrice} }"/>
 
                             </cells>
                         </ColumnListItem>
