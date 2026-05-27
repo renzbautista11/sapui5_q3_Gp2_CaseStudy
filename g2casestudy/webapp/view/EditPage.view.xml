@@ -34,7 +34,7 @@
                         <items>
                             <core:Item id="itemCreatedEP" key="Created" text="{i18n>statusCreated}"/>
                             <core:Item id="itemReleasedEP" key="Released" text="{i18n>statusReleased}"/>
-                            <core:Item id="itemPartiallyCompletedEP" key="PartiallyCompleted" text="{i18n>statusPartiallyCompleted}"/>
+                            <core:Item id="itemPartiallyCompletedEP" key="Partially Completed" text="{i18n>statusPartiallyCompleted}"/>
                             <core:Item id="itemDeliveredEP" key="Delivered" text="{i18n>statusDelivered}"/>
                         </items>
                     </Select>
@@ -65,7 +65,7 @@
                             <Text id="colTxtProductNameEP" text="{i18n>productNameColumn}"/>
                         </Column>
                         <Column id="colQuantityEP">
-                            <Text id="colTxtQuantityEP" text="{i18n>quantityColumn}"/>
+                            <Text id="colTxtQuantityEP" text="{i18n>quantityColumn}" width="6rem"/>
                         </Column>
                         <Column id="colUnitPriceEP">
                             <Text id="colTxtUnitPriceEP" text="{i18n>unitPriceColumn}"/>
@@ -80,7 +80,11 @@
                             <cells>
 
                                 <Text id="txtProductNameEP" text="{Products/ProductName}"/>
-                                <Text id="txtQuantityEP" text="{Quantity}" />
+                                <!-- Quantity Editable -->
+                                    <Input id="_IDGenInput4"
+                                        value="{Quantity}"
+                                        type="Number"
+                                        liveChange="onQuantityChange"/>
                                 <Text id="txtUnitPriceEP" text="{UnitPrice}" />
                                 <Text id="txtTotalPriceEP" text="{= ${Quantity} * ${UnitPrice} }"/>
 
